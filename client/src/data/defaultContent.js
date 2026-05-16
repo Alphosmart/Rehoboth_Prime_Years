@@ -1,78 +1,84 @@
-const image = (text) => `https://placehold.co/1200x800/0f766e/ffffff?text=${encodeURIComponent(text)}`;
+const image = (text) => `https://placehold.co/1200x800/302F62/ffffff?text=${encodeURIComponent(text)}`;
+const logoUrl = `https://placehold.co/512x512/302F62/ffffff?text=${encodeURIComponent("RPY")}`;
 
 const futureDate = (days) => new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
 
 export const defaultSettings = {
-  schoolName: "Bright Future Academy",
-  motto: "Learning today, leading tomorrow",
-  logo: "",
-  primaryColor: "#0f766e",
-  secondaryColor: "#f59e0b",
-  email: "info@brightfuture.edu",
-  phone: "+234 800 000 0000",
-  whatsapp: "+2348000000000",
-  address: "1 Education Road, Lagos, Nigeria",
-  portalUrl: "#",
-  facebookUrl: "https://facebook.com",
-  instagramUrl: "https://instagram.com",
-  youtubeUrl: "https://youtube.com",
+  schoolName: "Rehoboth Prime Years",
+  motto: "Building lives on the Solid Rock",
+  logo: logoUrl,
+  favicon: logoUrl,
+  primaryColor: "#302F62",
+  secondaryColor: "#E72125",
+  email: "info@rehobothprimeyears.edu.ng",
+  phone: "07046272361, 09018690022, 08180705629",
+  whatsapp: "+2347046272361",
+  address: "900241 Cadastral Street, Plot 5/7 Durumi District, Area 1, F.C.T. Abuja",
+  facebookUrl: "",
+  instagramUrl: "",
+  youtubeUrl: "",
   googleMapEmbed: "",
-  footerText: "Nurturing confident learners and responsible leaders.",
-  seoTitle: "Bright Future Academy",
-  seoDescription: "A professional school committed to academic excellence and character."
+  footerText: "Training children through total education, one child at a time for Christ.",
+  seoTitle: "Rehoboth Prime Years",
+  seoDescription: "A Biblically-based Christian school in Abuja serving learners from Prekindergarten to Grade 12."
 };
 
 export const defaultHomepage = {
-  heroTitle: "A school where character and excellence grow together",
-  heroSubtitle: "Bright Future Academy gives every learner the structure, care, and inspiration to thrive.",
-  heroImage: image("Students"),
+  heroTitle: "Rehoboth Prime Years",
+  heroSubtitle: "A Biblically-based learning community preparing the hearts, minds, and spirits of learners in the image of Jesus Christ.",
+  heroImage: image("Rehoboth Prime Years"),
   heroSlides: [
     {
-      title: "A school where character and excellence grow together",
-      subtitle: "Bright Future Academy gives every learner the structure, care, and inspiration to thrive.",
-      image: image("Students"),
+      title: "Rehoboth Prime Years",
+      subtitle: "A Biblically-based learning community preparing the hearts, minds, and spirits of learners in the image of Jesus Christ.",
+      image: image("Rehoboth Prime Years"),
       ctaLabel: "Admissions",
       ctaLink: "/admissions"
     },
     {
-      title: "Balanced learning for confident young leaders",
-      subtitle: "Strong academics, practical creativity, sports, and values help each learner discover their best path.",
-      image: image("Learning"),
+      title: "Mastery-based education from Prekindergarten to Grade 12",
+      subtitle: "Individualized learning, strong academics, Scripture memory, and practical character training help each learner grow.",
+      image: image("Mastery Learning"),
       ctaLabel: "Academics",
       ctaLink: "/academics"
     },
     {
-      title: "A safe community where families feel at home",
-      subtitle: "Our teachers partner with parents to support growth, discipline, curiosity, and joy in learning.",
-      image: image("Community"),
+      title: "One child at a time for Christ",
+      subtitle: "Chapel, devotion, discipleship, and the 90 character traits of Jesus Christ shape our daily school life.",
+      image: image("Faith and Learning"),
       ctaLabel: "Contact Us",
       ctaLink: "/contact"
     }
   ],
-  aboutPreview: "We combine strong academics, attentive pastoral care, and practical leadership opportunities in a safe learning community.",
+  aboutPreview: "Welcome to Rehoboth Prime Years, where we provide a Biblically-based worldview of learning that prepares the hearts, minds, and spirits of all our learners. Our mission is to transform each learner in the image of Jesus Christ, the world's foremost example.",
   whyChooseUs: [
-    { title: "Experienced Teachers", description: "Dedicated educators who know every learner by name." },
-    { title: "Balanced Curriculum", description: "Academics, creativity, technology, sports, and character formation." },
-    { title: "Safe Environment", description: "A welcoming campus designed for focus, confidence, and growth." }
+    { title: "Biblically-based Curriculum", description: "Biblical principles, Scripture memory, and wisdom principles are integrated into school programmes." },
+    { title: "Godly Character Training", description: "Learners study the A.C.E. character programme and the 90 character traits of Jesus Christ." },
+    { title: "Mastery-based Learning", description: "Built-in reinforcement and individualized learning help students progress with confidence." },
+    { title: "Critical Thinking", description: "Academic work develops thinking skills while nurturing faith, service, and social growth." },
+    { title: "Socialization", description: "Students grow through chapel, learning centre devotion, conventions, clubs, sports, and service." },
+    { title: "Whole-child Care", description: "The school supports the spiritual, social, mental, and physical needs of every learner." }
   ],
-  admissionsCtaTitle: "Applications are open",
-  admissionsCtaText: "Meet our admissions team and discover the right class placement for your child."
+  admissionsCtaTitle: "Admissions are open",
+  admissionsCtaText: "Enrollment for all grades is through a diagnostic test, with early reading programmes placed through Academic Information manuals."
 };
 
 export const defaultAcademics = [
-  { _id: "default-academics-early-years", title: "Early Years", level: "Nursery", description: "Play-rich foundations for literacy, numeracy, and social confidence.", image: image("Early Years") },
-  { _id: "default-academics-primary", title: "Primary School", level: "Primary", description: "Strong core subjects with arts, technology, sports, and leadership.", image: image("Primary") },
-  { _id: "default-academics-secondary", title: "Junior Secondary", level: "Secondary", description: "Focused preparation for higher study, independence, and responsibility.", image: image("Secondary") }
+  { _id: "default-academics-prekindergarten", title: "Prekindergarten", level: "Prekindergarten", description: "Early foundations for young learners beginning school in a Christ-centred environment.", image: image("Prekindergarten") },
+  { _id: "default-academics-primary", title: "Reading Readiness to Grade 6", level: "Primary", description: "Mastery-based learning in core subjects, Scripture memory, and character development.", image: image("Primary") },
+  { _id: "default-academics-secondary", title: "Middle and High School", level: "Secondary", description: "Grade 7 to Grade 12 academics with electives, conventions, service, and college-level options for advanced students.", image: image("High School") }
 ];
 
 export const defaultAdmissions = {
   title: "Admissions",
-  content: "<p>Our admissions process is friendly, transparent, and designed to help families make a confident decision.</p>",
-  requirements: ["Completed application form", "Previous school records", "Birth certificate", "Two passport photographs"],
+  content: "<p>Enrollment for all grades is through a diagnostic test. Reading Readiness and Learning to Read/Grade 1 placements are guided by Academic Information instructional manuals.</p>",
+  requirements: ["Completed online application form", "Birth certificate", "Immunization record", "Previous school records", "Soft copy of the applicant's passport photograph"],
   processSteps: [
-    { title: "Enquire", description: "Contact us or visit the school." },
-    { title: "Assessment", description: "Schedule an age-appropriate placement assessment." },
-    { title: "Enrollment", description: "Complete registration and orientation." }
+    { title: "Apply", description: "Fill out the online application form." },
+    { title: "Submit Documents", description: "Submit all required documents for review." },
+    { title: "Orientation", description: "Attend the compulsory parents orientation programme for all new families." },
+    { title: "Interview", description: "Attend a parent-student interview." },
+    { title: "Confirmation", description: "Receive admission confirmation from the school." }
   ],
   ctaText: "Speak with admissions"
 };
@@ -80,11 +86,11 @@ export const defaultAdmissions = {
 export const defaultPages = {
   about: {
     title: "About Us",
-    excerpt: "A caring learning community with high expectations.",
-    content: "Bright Future Academy partners with families to raise curious, disciplined, and compassionate learners.",
-    mission: "To educate learners through excellent teaching, strong values, and meaningful opportunities.",
-    vision: "To be a leading school known for character, innovation, and academic distinction.",
-    coreValues: ["Integrity", "Excellence", "Respect", "Service", "Curiosity"]
+    excerpt: "A Biblically-based Christian learning community.",
+    content: "Rehoboth Prime Years provides a Biblically-based worldview of learning that prepares the hearts, minds, and spirits of all learners.",
+    mission: "The school seeks to build lives on the Solid Rock, Christ Jesus our Lord, and to be involved in true Christian education for children, meeting their spiritual, social, mental, and physical needs.",
+    vision: "Training children through total education, which is only found in Christ Jesus: a holistic education, one child at a time for Christ.",
+    coreValues: ["Faith", "Excellence", "Integrity", "Service"]
   },
   "privacy-policy": {
     title: "Privacy Policy",
@@ -131,17 +137,16 @@ export const defaultEvents = [
 ];
 
 export const defaultTestimonials = [
-  { _id: "default-testimonial-parent", name: "Mrs. E. Johnson", role: "Parent", message: "The teachers are attentive, and my child has grown in confidence and discipline." },
-  { _id: "default-testimonial-alumnus", name: "Daniel A.", role: "Alumnus", message: "Bright Future gave me the habits and courage I still rely on today." }
+  { _id: "default-testimonial-parent", name: "Rehoboth Prime Years Parent", role: "Parent", message: "The teachers are attentive, and my child has grown in confidence, discipline, and love for God's Word." },
+  { _id: "default-testimonial-student", name: "Rehoboth Prime Years Learner", role: "Student", message: "The school helps me grow in my academics, character, and faith." }
 ];
 
 export const defaultStaff = [
-  { _id: "default-staff-principal", name: "Mrs. Ada Williams", role: "Principal", qualification: "M.Ed Educational Leadership", biography: "Ada leads with warmth, clarity, and a deep belief in every learner.", image: image("Principal") },
-  { _id: "default-staff-academics", name: "Mr. Tunde Okafor", role: "Head of Academics", qualification: "B.Sc, PGDE", biography: "Tunde coordinates curriculum quality and teacher development.", image: image("Academics") }
+  { _id: "default-staff-principal", name: "School Principal", role: "Principal", qualification: "Rehoboth Prime Years Leadership", biography: "The Principal leads the school community in Christian education, discipline, academic growth, and partnership with families.", image: image("Principal") },
+  { _id: "default-staff-chaplain", name: "School Chaplain", role: "Chaplain", qualification: "School Ministry", biography: "The Chaplain supports chapel, discipleship, Bible memory work, and spiritual growth across the school community.", image: image("Chaplain") }
 ];
 
 export const defaultFaqs = [
   { _id: "default-faq-apply", question: "How do I apply?", answer: "Complete the enquiry form or contact admissions to schedule a visit.", category: "Admissions" },
-  { _id: "default-faq-portal", question: "Does the school have a portal?", answer: "Yes. Parents and students can use the School Portal button to access the existing portal.", category: "Portal" },
   { _id: "default-faq-tour", question: "Can I book a school tour?", answer: "Yes. Send a message through the contact form or call the school office.", category: "Admissions" }
 ];

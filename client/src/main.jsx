@@ -6,6 +6,11 @@ import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
 import "./styles.css";
 
+const favicon = document.createElement("link");
+favicon.rel = "icon";
+favicon.href = `https://placehold.co/512x512/302F62/ffffff?text=${encodeURIComponent("RPY")}`;
+document.head.appendChild(favicon);
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>

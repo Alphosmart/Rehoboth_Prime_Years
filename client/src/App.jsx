@@ -6,7 +6,6 @@ import Home from "./pages/public/Home";
 import SimplePage from "./pages/public/SimplePage";
 import Academics from "./pages/public/Academics";
 import Admissions from "./pages/public/Admissions";
-import Portal from "./pages/public/Portal";
 import Blog from "./pages/public/Blog";
 import SingleBlog from "./pages/public/SingleBlog";
 import Gallery from "./pages/public/Gallery";
@@ -34,6 +33,7 @@ import {
   PageManager,
   TestimonialManager
 } from "./pages/admin/Managers";
+import { ADMIN_LOGIN_PATH, ADMIN_LOGIN_ROUTE } from "./config/admin";
 
 export default function App() {
   return (
@@ -43,7 +43,6 @@ export default function App() {
         <Route path="about" element={<SimplePage slug="about" />} />
         <Route path="academics" element={<Academics />} />
         <Route path="admissions" element={<Admissions />} />
-        <Route path="portal" element={<Portal />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:slug" element={<SingleBlog />} />
         <Route path="gallery" element={<Gallery />} />
@@ -54,8 +53,7 @@ export default function App() {
         <Route path="contact" element={<Contact />} />
         <Route path="privacy-policy" element={<SimplePage slug="privacy-policy" />} />
       </Route>
-      <Route path="/login" element={<Navigate to="/admin/login" replace />} />
-      <Route path="/admin/login" element={<Login />} />
+      <Route path={ADMIN_LOGIN_ROUTE} element={<Login />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />
@@ -73,7 +71,7 @@ export default function App() {
           <Route path="messages" element={<Messages />} />
           <Route path="users" element={<Users />} />
           <Route path="change-password" element={<ChangePassword />} />
-          <Route path="logout" element={<Navigate to="/admin/login" replace />} />
+          <Route path="logout" element={<Navigate to={ADMIN_LOGIN_PATH} replace />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />

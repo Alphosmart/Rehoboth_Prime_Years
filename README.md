@@ -1,4 +1,4 @@
-# School Website CMS
+# Rehoboth Prime Years CMS
 
 A full-stack school website with a public React site and a protected admin CMS. Public pages fetch content from the Express API, and admin edits are saved to MongoDB.
 
@@ -41,7 +41,7 @@ cp client/.env.example client/.env
 
 ```env
 PORT=5000
-MONGO_URI=mongodb://127.0.0.1:27017/school_website
+MONGO_URI=mongodb://127.0.0.1:27017/rehoboth_prime_years
 JWT_SECRET=replace-with-a-long-random-secret
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
@@ -87,7 +87,7 @@ ADMIN_PASSWORD=
 
 The dashboard manages:
 
-- Website settings, branding, colors, contact details, portal URL, SEO, footer
+- Website settings, branding, colors, contact details, SEO, footer
 - Homepage content and hero image
 - About page content, mission, vision, values
 - Admissions content

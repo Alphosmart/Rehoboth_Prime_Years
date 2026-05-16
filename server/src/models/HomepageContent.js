@@ -2,14 +2,22 @@ const mongoose = require("mongoose");
 
 const homepageContentSchema = new mongoose.Schema(
   {
-    heroTitle: { type: String, default: "Welcome to Bright Future Academy" },
-    heroSubtitle: { type: String, default: "A caring school where every child is known, challenged, and inspired." },
+    heroTitle: { type: String, default: "Rehoboth Prime Years" },
+    heroSubtitle: { type: String, default: "A Biblically-based learning community preparing the hearts, minds, and spirits of learners in the image of Jesus Christ." },
     heroImage: String,
+    heroVideo: String,
+    heroMedia: String,
+    heroMediaType: { type: String, enum: ["image", "video"], default: "image" },
+    heroMediaActive: { type: Boolean, default: true },
     heroSlides: [
       {
         title: String,
         subtitle: String,
         image: String,
+        video: String,
+        media: String,
+        mediaType: { type: String, enum: ["image", "video"], default: "image" },
+        isActive: { type: Boolean, default: true },
         ctaLabel: String,
         ctaLink: String
       }

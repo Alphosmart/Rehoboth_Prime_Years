@@ -5,10 +5,14 @@ function notFound(req, res, next) {
 }
 
 function errorHandler(err, req, res, next) {
-  const statusCode = err.statusCode || 500;
+  const isValidationError = err.name === "ValidationError";
+  const isZodError = err.name === "ZodError";
+  const statusCode = err.statusCode || (isValidationError || isZodError ? 400 : 500);
+  const validationMessages = isValidationError ? Object.values(err.errors || {}).map((error) => error.message) : undefined;
+  const zodMessages = isZodError ? err.errors?.map((error) => error.message) : undefined;
   res.status(statusCode).json({
-    message: err.message || "Server error",
-    errors: err.errors,
+    message: validationMessages?.join(", ") || zodMessages?.join(", ") || err.message || "Server error",
+    errors: process.env.NODE_ENV === "production" ? undefined : err.errors,
     stack: process.env.NODE_ENV === "production" ? undefined : err.stack
   });
 }

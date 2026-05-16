@@ -2,26 +2,25 @@ const mongoose = require("mongoose");
 
 const siteSettingsSchema = new mongoose.Schema(
   {
-    schoolName: { type: String, default: "Bright Future Academy" },
-    motto: { type: String, default: "Learning today, leading tomorrow" },
+    schoolName: { type: String, default: "Rehoboth Prime Years" },
+    motto: { type: String, default: "Building lives on the Solid Rock" },
     logo: String,
     favicon: String,
-    primaryColor: { type: String, default: "#0f766e" },
-    secondaryColor: { type: String, default: "#f59e0b" },
-    email: { type: String, default: "info@brightfuture.edu" },
-    phone: { type: String, default: "+234 800 000 0000" },
-    whatsapp: { type: String, default: "+2348000000000" },
-    address: { type: String, default: "1 Education Road, Lagos, Nigeria" },
-    portalUrl: { type: String, default: "https://portal.example.com" },
+    primaryColor: { type: String, default: "#302F62" },
+    secondaryColor: { type: String, default: "#E72125" },
+    email: { type: String, default: "info@rehobothprimeyears.edu.ng" },
+    phone: { type: String, default: "07046272361, 09018690022, 08180705629" },
+    whatsapp: { type: String, default: "+2347046272361" },
+    address: { type: String, default: "900241 Cadastral Street, Plot 5/7 Durumi District, Area 1, F.C.T. Abuja" },
     facebookUrl: String,
     instagramUrl: String,
     youtubeUrl: String,
     tiktokUrl: String,
     xUrl: String,
     googleMapEmbed: String,
-    footerText: { type: String, default: "Nurturing confident learners and responsible leaders." },
-    seoTitle: { type: String, default: "Bright Future Academy" },
-    seoDescription: { type: String, default: "A professional school committed to academic excellence and character." }
+    footerText: { type: String, default: "Training children through total education, one child at a time for Christ." },
+    seoTitle: { type: String, default: "Rehoboth Prime Years" },
+    seoDescription: { type: String, default: "A Biblically-based Christian school in Abuja serving learners from Prekindergarten to Grade 12." }
   },
   { timestamps: true }
 );
