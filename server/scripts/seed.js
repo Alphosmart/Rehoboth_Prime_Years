@@ -14,7 +14,7 @@ const AcademicProgram = require("../src/models/AcademicProgram");
 const AdmissionContent = require("../src/models/AdmissionContent");
 const FAQ = require("../src/models/FAQ");
 
-const placeholder = (text) => `https://placehold.co/1200x800/302F62/ffffff?text=${encodeURIComponent(text)}`;
+const placeholder = (text, bg = "7EA652", fg = "ffffff") => `https://placehold.co/1200x800/${bg}/${fg}?text=${encodeURIComponent(text)}`;
 
 async function seed() {
   await connectDB();
@@ -42,11 +42,11 @@ async function seed() {
 
   await SiteSettings.create({
     schoolName: "Rehoboth Prime Years",
-    motto: "Building lives on the Solid Rock",
+    motto: "Growing in wisdom and favour",
     logo: "",
     favicon: "",
-    primaryColor: "#302F62",
-    secondaryColor: "#E72125",
+    primaryColor: "#7EA652",
+    secondaryColor: "#F5E011",
     email: "info@rehobothprimeyears.edu.ng",
     phone: "07046272361, 09018690022, 08180705629",
     whatsapp: "+2347046272361",
@@ -55,135 +55,135 @@ async function seed() {
     instagramUrl: "",
     youtubeUrl: "",
     googleMapEmbed: "",
-    footerText: "Training children through total education, one child at a time for Christ.",
+    footerText: "A caring Abuja school where children grow in wisdom, confidence, character, and favour with God and people.",
     seoTitle: "Rehoboth Prime Years",
-    seoDescription: "A Biblically-based Christian school in Abuja serving learners from Prekindergarten to Grade 12."
+    seoDescription: "A warm Abuja school for early years, primary, and secondary learners, combining strong foundations, creativity, character, and family partnership."
   });
 
   await HomepageContent.create({
-    heroTitle: "Rehoboth Prime Years",
-    heroSubtitle: "A Biblically-based learning community preparing the hearts, minds, and spirits of learners in the image of Jesus Christ.",
+    heroTitle: "Every child known. Every talent strengthened.",
+    heroSubtitle: "A close-knit Abuja learning community where strong academics, creativity, confidence, and character grow side by side.",
     heroImage: placeholder("Rehoboth Prime Years"),
     heroSlides: [
       {
-        title: "Rehoboth Prime Years",
-        subtitle: "A Biblically-based learning community preparing the hearts, minds, and spirits of learners in the image of Jesus Christ.",
-        image: placeholder("Rehoboth Prime Years"),
-        ctaLabel: "Admissions",
+        title: "Every child known. Every talent strengthened.",
+        subtitle: "Small-school warmth, purposeful teaching, and daily encouragement help learners grow with confidence.",
+        image: placeholder("Known and Encouraged"),
+        ctaLabel: "Start Admissions",
         ctaLink: "/admissions"
       },
       {
-        title: "Mastery-based education from Prekindergarten to Grade 12",
-        subtitle: "Individualized learning, strong academics, Scripture memory, and practical character training help each learner grow.",
-        image: placeholder("Mastery Learning"),
-        ctaLabel: "Academics",
+        title: "Foundations that make learning feel possible",
+        subtitle: "Numeracy, literacy, science discovery, values, and creative expression are taught with patience and structure.",
+        image: placeholder("Foundations"),
+        ctaLabel: "Explore Academics",
         ctaLink: "/academics"
       },
       {
-        title: "One child at a time for Christ",
-        subtitle: "Chapel, devotion, discipleship, and the 90 character traits of Jesus Christ shape our daily school life.",
-        image: placeholder("Faith and Learning"),
-        ctaLabel: "Contact Us",
+        title: "A school day full of discovery and care",
+        subtitle: "Learners build friendships, practice responsibility, ask better questions, and celebrate progress in visible ways.",
+        image: placeholder("Discovery and Care", "F5E011", "1B1B1B"),
+        ctaLabel: "Visit Us",
         ctaLink: "/contact"
       }
     ],
-    aboutPreview: "Welcome to Rehoboth Prime Years, where we provide a Biblically-based worldview of learning that prepares the hearts, minds, and spirits of all our learners. Our mission is to transform each learner in the image of Jesus Christ, the world's foremost example.",
+    aboutPreview: "Rehoboth Prime Years is a nurturing school community in Abuja where children are guided to learn carefully, think clearly, act responsibly, and grow in wisdom and favour. We combine structured academics with creative exploration, attentive pastoral care, and steady partnership with families.",
     whyChooseUs: [
-      { title: "Biblically-based Curriculum", description: "Biblical principles, Scripture memory, and wisdom principles are integrated into school programmes." },
-      { title: "Godly Character Training", description: "Learners study the A.C.E. character programme and the 90 character traits of Jesus Christ." },
-      { title: "Mastery-based Learning", description: "Built-in reinforcement and individualized learning help students progress with confidence." },
-      { title: "Critical Thinking", description: "Academic work develops thinking skills while nurturing faith, service, and social growth." },
-      { title: "Socialization", description: "Students grow through chapel, learning centre devotion, conventions, clubs, sports, and service." },
-      { title: "Whole-child Care", description: "The school supports the spiritual, social, mental, and physical needs of every learner." }
+      { title: "Every learner is noticed", description: "Teachers track progress closely and respond early when a child needs support, stretch, or encouragement." },
+      { title: "Strong foundations", description: "Reading, writing, numeracy, science, and values are taught through clear routines and practical activities." },
+      { title: "Hands-on discovery", description: "Projects, learning games, presentations, and experiments help children connect lessons to real life." },
+      { title: "Character in practice", description: "Learners practice courtesy, honesty, service, resilience, and responsibility in ordinary school moments." },
+      { title: "Family partnership", description: "Parents receive practical communication and are invited into the child's growth journey." },
+      { title: "Joyful school culture", description: "Celebrations, clubs, sports, reading, arts, and community events make school life memorable." }
     ],
-    admissionsCtaTitle: "Admissions are open",
-    admissionsCtaText: "Enrollment for all grades is through a diagnostic test, with early reading programmes placed through Academic Information manuals."
+    admissionsCtaTitle: "Come see how your child can grow here",
+    admissionsCtaText: "Book a visit, meet the team, and let us help you choose the right entry pathway for your child."
   });
 
   await PageContent.create([
     {
       slug: "about",
-      title: "About Us",
-      excerpt: "A Biblically-based Christian learning community.",
-      content: "Rehoboth Prime Years provides a Biblically-based worldview of learning that prepares the hearts, minds, and spirits of all learners.",
-      mission: "The school seeks to build lives on the Solid Rock, Christ Jesus our Lord, and to be involved in true Christian education for children, meeting their spiritual, social, mental, and physical needs.",
-      vision: "Training children through total education, which is only found in Christ Jesus: a holistic education, one child at a time for Christ.",
-      coreValues: ["Faith", "Excellence", "Integrity", "Service"]
+      title: "About Rehoboth Prime Years",
+      excerpt: "A nurturing school community where children are known, guided, and encouraged to grow well.",
+      content: "<p>Rehoboth Prime Years was created for families who want more than routine schooling. We provide a warm, orderly, and purposeful environment where children build strong academic foundations, develop good habits, and discover the confidence to participate fully.</p><p>Our classrooms are intentionally personal. Teachers pay attention to how each learner thinks, communicates, solves problems, and relates with others. The result is a school culture that feels caring without losing structure, and ambitious without losing childhood joy.</p>",
+      mission: "To nurture learners who think clearly, communicate confidently, act with integrity, and grow in wisdom and favour through excellent teaching and caring guidance.",
+      vision: "To be a trusted learning community where every child is prepared for purposeful study, responsible living, and positive influence.",
+      coreValues: ["Wisdom", "Care", "Curiosity", "Integrity", "Responsibility", "Service"]
     },
     {
       slug: "privacy-policy",
       title: "Privacy Policy",
-      content: "We collect only the information needed to respond to enquiries and operate school services responsibly."
+      content: "We collect only the information needed to respond to enquiries, support admissions, and operate school services responsibly."
     }
   ]);
 
   await AdmissionContent.create({
     title: "Admissions",
-    content: "Enrollment for all grades is through a diagnostic test. Reading Readiness and Learning to Read/Grade 1 placements are guided by Academic Information instructional manuals.",
-    requirements: ["Completed online application form", "Birth certificate", "Immunization record", "Previous school records", "Soft copy of the applicant's passport photograph"],
+    content: "Choosing a school is personal. Our admissions process is designed to help families understand the Rehoboth Prime Years environment and help the school understand each child's learning needs. Families are welcome to make enquiries, book a school visit, and speak with our admissions team before completing registration.",
+    requirements: ["Completed application form", "Birth certificate", "Recent passport photograph", "Previous school records where available", "Parent or guardian contact information"],
     processSteps: [
-      { title: "Apply", description: "Fill out the online application form." },
-      { title: "Submit Documents", description: "Submit all required documents for review." },
-      { title: "Orientation", description: "Attend the compulsory parents orientation programme for all new families." },
-      { title: "Interview", description: "Attend a parent-student interview." },
-      { title: "Confirmation", description: "Receive admission confirmation from the school." }
+      { title: "Enquire", description: "Call, message, or complete the contact form so the admissions team can guide you." },
+      { title: "Visit", description: "Tour the school, ask questions, and meet members of the team." },
+      { title: "Placement Review", description: "We review age, records, and readiness so each child starts in the right class." },
+      { title: "Registration", description: "Submit required documents and complete the registration process." },
+      { title: "Welcome", description: "New families receive orientation details and settling-in support." }
     ],
     ctaText: "Speak with admissions"
   });
 
   await AcademicProgram.create([
-    { title: "Prekindergarten", level: "Prekindergarten", description: "Early foundations for young learners beginning school in a Christ-centred environment.", image: placeholder("Prekindergarten"), order: 1 },
-    { title: "Reading Readiness to Grade 6", level: "Primary", description: "Mastery-based learning in core subjects, Scripture memory, and character development.", image: placeholder("Primary"), order: 2 },
-    { title: "Middle and High School", level: "Secondary", description: "Grade 7 to Grade 12 academics with electives, conventions, service, and college-level options for advanced students.", image: placeholder("High School"), order: 3 }
+    { title: "Early Years", level: "Early Years", description: "Playful routines, phonics, number sense, social confidence, and gentle independence for young learners.", image: placeholder("Early Years"), order: 1 },
+    { title: "Primary School", level: "Primary", description: "Core literacy, numeracy, science, social studies, values, creative work, and confidence-building presentations.", image: placeholder("Primary School"), order: 2 },
+    { title: "Secondary School", level: "Secondary", description: "A structured pathway for independent study, problem-solving, leadership, technology, and future readiness.", image: placeholder("Secondary School"), order: 3 }
   ]);
 
   await BlogPost.create([
     {
-      title: "Students Shine at Inter-School Science Fair",
-      excerpt: "Our science club earned top recognition for practical problem-solving projects.",
-      content: "<p>Students presented creative solutions in renewable energy, water filtration, and robotics.</p>",
-      featuredImage: placeholder("Science Fair"),
-      category: "News",
-      tags: ["science", "awards"],
+      title: "Mathematics Day Builds Confidence",
+      excerpt: "Learners explored numbers through games, puzzles, teamwork, and friendly challenges.",
+      content: "<p>Our Mathematics Day helped learners see numeracy as something practical, playful, and useful. Activities included number games, shape work, dice challenges, and peer collaboration.</p>",
+      featuredImage: placeholder("Mathematics Day"),
+      category: "Campus Life",
+      tags: ["mathematics", "learning"],
       author: "School Admin",
       status: "published"
     },
     {
-      title: "New Library Resources Now Available",
-      excerpt: "The school library has expanded its reading and research collection.",
-      content: "<p>Learners now have access to more fiction, reference texts, and digital resources.</p>",
-      featuredImage: placeholder("Library"),
+      title: "Building a Steady Reading Culture",
+      excerpt: "Short daily reading routines are helping pupils grow vocabulary, expression, and confidence.",
+      content: "<p>Reading grows best when it becomes a rhythm. Our teachers use guided reading, vocabulary conversations, and class storytelling to help learners enjoy books and communicate better.</p>",
+      featuredImage: placeholder("Reading Culture", "F5E011", "1B1B1B"),
       category: "Academics",
-      tags: ["library", "reading"],
+      tags: ["reading", "literacy"],
       author: "School Admin",
       status: "published"
     }
   ]);
 
   await GalleryItem.create([
-    { title: "Morning Assembly", description: "A calm start to the school day.", image: placeholder("Assembly"), category: "Campus", featured: true },
-    { title: "Sports Day", description: "Students building teamwork through sport.", image: placeholder("Sports"), category: "Events", featured: true },
-    { title: "Art Studio", description: "Creative learning in action.", image: placeholder("Art"), category: "Creativity" }
+    { title: "Mathematics Day", description: "Learning numbers through play and teamwork.", image: placeholder("Mathematics Day"), category: "Learning", featured: true },
+    { title: "Reading Time", description: "Children building fluency and expression.", image: placeholder("Reading Time"), category: "Academics", featured: true },
+    { title: "Creative Studio", description: "Art, colour, and imagination in action.", image: placeholder("Creative Studio", "F5E011", "1B1B1B"), category: "Creativity", featured: true }
   ]);
 
   await Event.create([
-    { title: "Open Day", date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14), time: "10:00 AM", location: "School Hall", description: "Tour the campus and meet our staff.", image: placeholder("Open Day") },
-    { title: "Cultural Day", date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 40), time: "11:00 AM", location: "Main Field", description: "A celebration of heritage, language, food, and music.", image: placeholder("Cultural Day") }
+    { title: "Family Open Morning", date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 14), time: "10:00 AM", location: "School Campus", description: "Tour the school, meet the team, and ask admissions questions.", image: placeholder("Open Morning") },
+    { title: "Young Innovators Showcase", date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 40), time: "11:00 AM", location: "Main Hall", description: "Learners present creative projects, science ideas, and practical problem-solving work.", image: placeholder("Young Innovators", "F5E011", "1B1B1B") }
   ]);
 
   await StaffMember.create([
-    { name: "School Principal", role: "Principal", qualification: "Rehoboth Prime Years Leadership", biography: "The Principal leads the school community in Christian education, discipline, academic growth, and partnership with families.", image: placeholder("Principal"), order: 1 },
-    { name: "School Chaplain", role: "Chaplain", qualification: "School Ministry", biography: "The Chaplain supports chapel, discipleship, Bible memory work, and spiritual growth across the school community.", image: placeholder("Chaplain"), order: 2 }
+    { name: "Head of School", role: "Head of School", qualification: "School Leadership", biography: "The Head of School leads teaching quality, learner care, school culture, and partnership with families.", image: placeholder("Head of School"), order: 1 },
+    { name: "Learning Lead", role: "Learning Lead", qualification: "Curriculum and Learner Support", biography: "The Learning Lead supports classroom routines, assessment, learner progress, and creative academic programmes.", image: placeholder("Learning Lead"), order: 2 }
   ]);
 
   await Testimonial.create([
-    { name: "Rehoboth Prime Years Parent", role: "Parent", message: "The teachers are attentive, and my child has grown in confidence, discipline, and love for God's Word.", image: placeholder("Parent") },
-    { name: "Rehoboth Prime Years Learner", role: "Student", message: "The school helps me grow in my academics, character, and faith.", image: placeholder("Learner") }
+    { name: "Rehoboth Prime Years Parent", role: "Parent", message: "The school feels personal. My child is seen, encouraged, and guided with patience.", image: placeholder("Parent") },
+    { name: "Rehoboth Prime Years Learner", role: "Learner", message: "I like that we learn with activities, ask questions, and celebrate when we improve.", image: placeholder("Learner") }
   ]);
 
   await FAQ.create([
-    { question: "How do I apply?", answer: "Complete the enquiry form or contact admissions to schedule a visit.", category: "Admissions", order: 1 },
-    { question: "Can I book a school tour?", answer: "Yes. Send a message through the contact form or call the school office.", category: "Admissions", order: 2 }
+    { question: "How do I apply?", answer: "Contact admissions, book a visit, and complete the application form after speaking with the school team.", category: "Admissions", order: 1 },
+    { question: "Can I book a school tour?", answer: "Yes. Families can schedule a visit through the contact form, WhatsApp, or a phone call.", category: "Admissions", order: 2 }
   ]);
 
   console.log("Seed completed");

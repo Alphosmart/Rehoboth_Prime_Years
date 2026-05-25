@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const homepageContentSchema = new mongoose.Schema(
   {
-    heroTitle: { type: String, default: "Rehoboth Prime Years" },
-    heroSubtitle: { type: String, default: "A Biblically-based learning community preparing the hearts, minds, and spirits of learners in the image of Jesus Christ." },
+    heroTitle: { type: String, default: "Every child known. Every talent strengthened." },
+    heroSubtitle: { type: String, default: "A close-knit Abuja learning community where strong academics, creativity, confidence, and character grow side by side." },
     heroImage: String,
     heroVideo: String,
     heroMedia: String,

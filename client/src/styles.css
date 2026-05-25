@@ -3,13 +3,16 @@
 @tailwind utilities;
 
 :root {
-  color: #172026;
-  background: #f8fafc;
+  color: #1b1b1b;
+  background: #fafbf8;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  background: #fafbf8;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .container-pad {
@@ -21,15 +24,15 @@ body {
 }
 
 .btn-primary {
-  @apply btn bg-brand text-white hover:bg-[#24234d] focus:ring-brand;
+  @apply btn bg-brand text-white hover:bg-[#4f6b2a] focus:ring-brand;
 }
 
 .btn-secondary {
-  @apply btn border border-brand/35 bg-white text-brand hover:bg-[#eef8fc] focus:ring-brand;
+  @apply btn border border-brand/30 bg-white text-brand hover:bg-[#eef5dd] focus:ring-brand;
 }
 
 .input {
-  @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-[#dff4fc];
+  @apply w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-[#dfeac8];
 }
 
 .label {
@@ -37,5 +40,5 @@ body {
 }
 
 .card {
-  @apply rounded-lg border border-slate-200 bg-white shadow-sm;
+  @apply rounded-lg border border-[#dbe8bf] bg-white shadow-sm;
 }

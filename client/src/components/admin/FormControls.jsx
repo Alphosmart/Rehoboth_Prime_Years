@@ -30,7 +30,7 @@ export function RichTextEditor({ label, value, onChange }) {
       </div>
       <div
         ref={ref}
-        className="min-h-40 rounded-md border border-slate-300 bg-white p-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-[#dff4fc]"
+        className="min-h-40 rounded-md border border-slate-300 bg-white p-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-schoolLime/40"
         contentEditable
         suppressContentEditableWarning
         onInput={(e) => onChange(e.currentTarget.innerHTML)}

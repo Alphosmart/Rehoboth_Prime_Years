@@ -8,7 +8,7 @@ import "./styles.css";
 
 const favicon = document.createElement("link");
 favicon.rel = "icon";
-favicon.href = `https://placehold.co/512x512/302F62/ffffff?text=${encodeURIComponent("RPY")}`;
+favicon.href = `https://placehold.co/512x512/7EA652/ffffff?text=${encodeURIComponent("RPY")}`;
 document.head.appendChild(favicon);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
