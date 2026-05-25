@@ -61,23 +61,19 @@ const quickLinks = [
 const quickLinkAccents = ["bg-schoolGreen", "bg-schoolBlue", "bg-accent", "bg-schoolRed"];
 
 const values = [
-  {
-    title: "Wisdom",
-    text: "Learners are taught to think carefully, listen well, and make choices they can stand behind."
-  },
-  {
-    title: "Care",
-    text: "Children grow best where adults notice them, guide them, and respond with patience."
-  },
-  {
-    title: "Curiosity",
-    text: "Questions, projects, experiments, reading, and play help children become active learners."
-  },
-  {
-    title: "Responsibility",
-    text: "Daily routines help learners practice honesty, service, self-control, and respect."
-  }
+  "Integrity and Character",
+  "Nurturing Environment",
+  "Academic Excellence",
+  "Faith-Based Education",
+  "Transformative Impact",
+  "Leadership Development",
+  "Community Engagement",
+  "Discipleship"
 ];
+
+const visionStatement = "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond";
+const missionStatement = "We are dedicated to nurturing the spiritual, academic and personal growth of each child through the use of biblical-integrated curriculum, innovative teaching techniques, and cutting edge technology.";
+const coreValuesIntro = "These core values form the foundation of Rehoboth Prime Years and guide its approach to education and learners development";
 
 const heroStats = [
   { value: "Early Years - Secondary", label: "learning pathway" },
@@ -126,12 +122,12 @@ function normalizeHeroSlide(slide = {}) {
 export default function Home() {
   const { settings } = useOutletContext();
   const [activeSlide, setActiveSlide] = useState(0);
-  const home = useApi(() => http.get("/homepage"), [], { fallbackData: defaultHomepage });
-  const blogs = useApi(() => http.get("/blogs?status=published"), [], { fallbackData: defaultBlogs });
-  const gallery = useApi(() => http.get("/gallery"), [], { fallbackData: defaultGallery });
-  const events = useApi(() => http.get("/events"), [], { fallbackData: defaultEvents });
-  const testimonials = useApi(() => http.get("/testimonials?active=true"), [], { fallbackData: defaultTestimonials });
-  const academics = useApi(() => http.get("/academics?active=true"), [], { fallbackData: defaultAcademics });
+  const home = useApi(() => http.get("/homepage"), [], { cacheKey: "homepage", fallbackData: defaultHomepage });
+  const blogs = useApi(() => http.get("/blogs?status=published"), [], { cacheKey: "blogs-published", fallbackData: defaultBlogs });
+  const gallery = useApi(() => http.get("/gallery"), [], { cacheKey: "gallery", fallbackData: defaultGallery });
+  const events = useApi(() => http.get("/events"), [], { cacheKey: "events", fallbackData: defaultEvents });
+  const testimonials = useApi(() => http.get("/testimonials?active=true"), [], { cacheKey: "testimonials-active", fallbackData: defaultTestimonials });
+  const academics = useApi(() => http.get("/academics?active=true"), [], { cacheKey: "academics-active", fallbackData: defaultAcademics });
 
   const data = home.data || defaultHomepage;
   const heroSlides = useMemo(() => {
@@ -276,16 +272,16 @@ export default function Home() {
 
       <section className="bg-white py-16">
         <div className="container-pad grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-lg bg-brand p-8 text-white">
-            <div className="flex items-center gap-3"><ShieldCheck /><h2 className="text-3xl font-black">Mission</h2></div>
-            <p className="mt-4 max-w-3xl leading-7 text-white/90">
-              To nurture learners who think clearly, communicate confidently, act with integrity, and grow in wisdom and favour through excellent teaching and caring guidance.
+          <div className="rounded-lg border border-accent/60 bg-accent/20 p-8">
+            <div className="flex items-center gap-3"><Sparkles className="text-accent" /><h2 className="text-3xl font-black text-slate-950">OUR VISION</h2></div>
+            <p className="mt-4 leading-7 text-slate-700">
+              {visionStatement}
             </p>
           </div>
-          <div className="rounded-lg border border-accent/60 bg-accent/20 p-8">
-            <div className="flex items-center gap-3"><Sparkles className="text-accent" /><h2 className="text-3xl font-black text-slate-950">Vision</h2></div>
-            <p className="mt-4 leading-7 text-slate-700">
-              A trusted learning community where every child is prepared for purposeful study, responsible living, and positive influence.
+          <div className="rounded-lg bg-brand p-8 text-white">
+            <div className="flex items-center gap-3"><ShieldCheck /><h2 className="text-3xl font-black">OUR MISSION</h2></div>
+            <p className="mt-4 max-w-3xl leading-7 text-white/90">
+              {missionStatement}
             </p>
           </div>
         </div>
@@ -309,13 +305,12 @@ export default function Home() {
 
       <section className="bg-white py-16">
         <div className="container-pad">
-          <SectionTitle eyebrow="Values" title="Habits children can carry beyond school" />
+          <SectionTitle title="Core Values" text={coreValuesIntro} />
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {values.map((item) => (
-              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm" key={item.title}>
+            {values.map((value) => (
+              <div className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm" key={value}>
                 <Compass className="text-schoolBlue" />
-                <h3 className="mt-4 text-lg font-bold text-slate-950">{item.title}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-600">{item.text}</p>
+                <h3 className="mt-4 text-lg font-bold text-slate-950">{value}</h3>
               </div>
             ))}
           </div>

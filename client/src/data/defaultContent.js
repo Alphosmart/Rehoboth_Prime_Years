@@ -2,6 +2,8 @@ import mathDayImage from "../pages/public/assets/Images/imgi_8_484631177_1807883
 import logoAsset from "../pages/public/assets/logo.jpg";
 
 const image = (text, bg = "7EA652", fg = "ffffff") => `https://placehold.co/1200x800/${bg}/${fg}?text=${encodeURIComponent(text)}`;
+const apiOrigin = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+const upload = (filename) => `${apiOrigin}/uploads/${filename}`;
 const logoUrl = logoAsset;
 
 const futureDate = (days) => new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
@@ -27,14 +29,20 @@ export const defaultSettings = {
 };
 
 export const defaultHomepage = {
-  heroTitle: "Every child known. Every talent strengthened.",
-  heroSubtitle: "A close-knit Abuja learning community where strong academics, creativity, confidence, and character grow side by side.",
-  heroImage: mathDayImage,
+  heroTitle: "Rehoboth Prime Years",
+  heroSubtitle: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
+  heroImage: upload("a4e11c9b-e4ed-45a8-b25a-169a2743ac0b.jpg"),
+  heroMedia: upload("a4e11c9b-e4ed-45a8-b25a-169a2743ac0b.jpg"),
+  heroMediaType: "image",
+  heroMediaActive: true,
   heroSlides: [
     {
-      title: "Every child known. Every talent strengthened.",
-      subtitle: "Small-school warmth, purposeful teaching, and daily encouragement help learners grow with confidence.",
-      image: mathDayImage,
+      title: "Rehoboth Prime Years",
+      subtitle: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
+      media: upload("91f9408e-a25f-4baa-a2d9-e65378db468f.jpg"),
+      mediaType: "image",
+      image: upload("91f9408e-a25f-4baa-a2d9-e65378db468f.jpg"),
+      isActive: true,
       ctaLabel: "Start Admissions",
       ctaLink: "/admissions"
     },
@@ -53,7 +61,7 @@ export const defaultHomepage = {
       ctaLink: "/contact"
     }
   ],
-  aboutPreview: "Rehoboth Prime Years is a nurturing school community in Abuja where children are guided to learn carefully, think clearly, act responsibly, and grow in wisdom and favour. We combine structured academics with creative exploration, attentive pastoral care, and steady partnership with families.",
+  aboutPreview: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
   whyChooseUs: [
     { title: "Every learner is noticed", description: "Teachers track progress closely and respond early when a child needs support, stretch, or encouragement." },
     { title: "Strong foundations", description: "Reading, writing, numeracy, science, and values are taught through clear routines and practical activities." },
@@ -89,11 +97,11 @@ export const defaultAdmissions = {
 export const defaultPages = {
   about: {
     title: "About Rehoboth Prime Years",
-    excerpt: "A nurturing school community where children are known, guided, and encouraged to grow well.",
-    content: "<p>Rehoboth Prime Years was created for families who want more than routine schooling. We provide a warm, orderly, and purposeful environment where children build strong academic foundations, develop good habits, and discover the confidence to participate fully.</p><p>Our classrooms are intentionally personal. Teachers pay attention to how each learner thinks, communicates, solves problems, and relates with others. The result is a school culture that feels caring without losing structure, and ambitious without losing childhood joy.</p>",
-    mission: "To nurture learners who think clearly, communicate confidently, act with integrity, and grow in wisdom and favour through excellent teaching and caring guidance.",
-    vision: "To be a trusted learning community where every child is prepared for purposeful study, responsible living, and positive influence.",
-    coreValues: ["Wisdom", "Care", "Curiosity", "Integrity", "Responsibility", "Service"]
+    excerpt: "A nurturing Christian school community where children are known, guided, and encouraged to grow in faith, excellence, and purpose.",
+    content: "<p>Rehoboth Prime Years was created for families who want more than routine schooling. We provide a warm, orderly, and purposeful environment where children build strong academic foundations, develop godly character, and discover the confidence to participate fully.</p><p>Our classrooms are intentionally personal. Teachers pay attention to how each learner thinks, communicates, solves problems, and relates with others. The result is a school culture that feels caring without losing structure, faith-filled without losing academic ambition, and purposeful without losing childhood joy.</p><p>These core values form the foundation of Rehoboth Prime Years and guide its approach to education and learners development</p>",
+    mission: "We are dedicated to nurturing the spiritual, academic and personal growth of each child through the use of biblical-integrated curriculum, innovative teaching techniques, and cutting edge technology.",
+    vision: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
+    coreValues: ["Integrity and Character", "Nurturing Environment", "Academic Excellence", "Faith-Based Education", "Transformative Impact", "Leadership Development", "Community Engagement", "Discipleship"]
   },
   "privacy-policy": {
     title: "Privacy Policy",

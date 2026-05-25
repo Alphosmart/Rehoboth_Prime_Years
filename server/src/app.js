@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const cors = require("cors");
 const compression = require("compression");
 const morgan = require("morgan");
+const mongoose = require("mongoose");
 const path = require("path");
 
 const routes = require("./routes");
@@ -33,7 +34,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan(process.env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
-app.get("/api/health", (req, res) => res.json({ status: "ok", database: "connected" }));
+const databaseStates = ["disconnected", "connected", "connecting", "disconnecting"];
+
+app.get("/api/health", (req, res) => {
+  const database = databaseStates[mongoose.connection.readyState] || "unknown";
+  res.json({ status: "ok", database });
+});
 app.use("/api", requireTrustedOrigin);
 app.use("/api", routes);
 app.use(notFound);

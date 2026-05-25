@@ -62,7 +62,7 @@ async function seed() {
 
   await HomepageContent.create({
     heroTitle: "Every child known. Every talent strengthened.",
-    heroSubtitle: "A close-knit Abuja learning community where strong academics, creativity, confidence, and character grow side by side.",
+    heroSubtitle: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
     heroImage: placeholder("Rehoboth Prime Years"),
     heroSlides: [
       {
@@ -87,7 +87,7 @@ async function seed() {
         ctaLink: "/contact"
       }
     ],
-    aboutPreview: "Rehoboth Prime Years is a nurturing school community in Abuja where children are guided to learn carefully, think clearly, act responsibly, and grow in wisdom and favour. We combine structured academics with creative exploration, attentive pastoral care, and steady partnership with families.",
+    aboutPreview: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
     whyChooseUs: [
       { title: "Every learner is noticed", description: "Teachers track progress closely and respond early when a child needs support, stretch, or encouragement." },
       { title: "Strong foundations", description: "Reading, writing, numeracy, science, and values are taught through clear routines and practical activities." },
@@ -104,11 +104,11 @@ async function seed() {
     {
       slug: "about",
       title: "About Rehoboth Prime Years",
-      excerpt: "A nurturing school community where children are known, guided, and encouraged to grow well.",
-      content: "<p>Rehoboth Prime Years was created for families who want more than routine schooling. We provide a warm, orderly, and purposeful environment where children build strong academic foundations, develop good habits, and discover the confidence to participate fully.</p><p>Our classrooms are intentionally personal. Teachers pay attention to how each learner thinks, communicates, solves problems, and relates with others. The result is a school culture that feels caring without losing structure, and ambitious without losing childhood joy.</p>",
-      mission: "To nurture learners who think clearly, communicate confidently, act with integrity, and grow in wisdom and favour through excellent teaching and caring guidance.",
-      vision: "To be a trusted learning community where every child is prepared for purposeful study, responsible living, and positive influence.",
-      coreValues: ["Wisdom", "Care", "Curiosity", "Integrity", "Responsibility", "Service"]
+      excerpt: "A nurturing Christian school community where children are known, guided, and encouraged to grow in faith, excellence, and purpose.",
+      content: "<p>Rehoboth Prime Years was created for families who want more than routine schooling. We provide a warm, orderly, and purposeful environment where children build strong academic foundations, develop godly character, and discover the confidence to participate fully.</p><p>Our classrooms are intentionally personal. Teachers pay attention to how each learner thinks, communicates, solves problems, and relates with others. The result is a school culture that feels caring without losing structure, faith-filled without losing academic ambition, and purposeful without losing childhood joy.</p><p>These core values form the foundation of Rehoboth Prime Years and guide its approach to education and learners development</p>",
+      mission: "We are dedicated to nurturing the spiritual, academic and personal growth of each child through the use of biblical-integrated curriculum, innovative teaching techniques, and cutting edge technology.",
+      vision: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
+      coreValues: ["Integrity and Character", "Nurturing Environment", "Academic Excellence", "Faith-Based Education", "Transformative Impact", "Leadership Development", "Community Engagement", "Discipleship"]
     },
     {
       slug: "privacy-policy",
