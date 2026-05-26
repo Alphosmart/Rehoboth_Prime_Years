@@ -199,12 +199,12 @@ export default function Home() {
           ) : (
             <img src={slide.media || slide.image || "https://placehold.co/1600x900"} alt="" className="h-full w-full object-cover opacity-60 transition-opacity duration-500" />
           )}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b1b]/90 via-[#5f7f32]/75 to-[#f5e011]/25" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b1b]/90 via-[#00843d]/75 to-[#ffd200]/25" />
         </div>
         <div className="container-pad relative flex min-h-[680px] items-center py-20">
           <div className="max-w-4xl">
             <p className="mb-4 inline-flex rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-accent">
-              {settings?.motto || "Growing in wisdom and favour"}
+              {settings?.motto || "Growing in wisdom and favour with God and Man"}
             </p>
             <h1 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">{slide.title}</h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-white/90">{slide.subtitle}</p>
@@ -447,7 +447,7 @@ export default function Home() {
             <div className="mt-6 grid gap-4 text-sm text-slate-700">
               {settings?.address && <p className="flex gap-3"><MapPin className="mt-1 h-5 w-5 shrink-0 text-brand" />{settings.address}</p>}
               {settings?.phone && <p className="flex gap-3"><Phone className="mt-1 h-5 w-5 shrink-0 text-brand" />{settings.phone}</p>}
-              <p className="font-medium text-brand">{settings?.email || "info@rehobothprimeyears.edu.ng"}</p>
+              <p className="font-medium text-brand">{settings?.email || "rehobothprimeyears@gmail.com"}</p>
             </div>
           </div>
           <ContactForm />

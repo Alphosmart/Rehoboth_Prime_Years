@@ -9,12 +9,12 @@ export default {
       },
       colors: {
         ink: "#172026",
-        brand: "#5F7F32",
-        accent: "#F5E011",
-        schoolGreen: "#7EA652",
-        schoolLime: "#ABC252",
-        schoolBlue: "#4A9ED3",
-        schoolRed: "#DD5B3E"
+        brand: "#00843D",
+        accent: "#FFD200",
+        schoolGreen: "#00843D",
+        schoolLime: "#A8D05F",
+        schoolBlue: "#0057B8",
+        schoolRed: "#D71920"
       }
     }
   },

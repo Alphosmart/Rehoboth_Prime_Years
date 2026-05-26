@@ -20,7 +20,7 @@ const links = [
 
 export default function PublicLayout() {
   const [open, setOpen] = useState(false);
-  const { data: settings } = useApi(() => http.get("/settings"), [], { cacheKey: "settings", fallbackData: defaultSettings });
+  const { data: settings } = useApi(() => http.get("/settings"), [], { cacheKey: "settings-v3", fallbackData: defaultSettings });
   const whatsapp = settings?.whatsapp?.replace(/[^\d]/g, "");
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function PublicLayout() {
       <header className="sticky top-0 z-40 border-b border-schoolLime/35 bg-white/95 backdrop-blur">
         <div className="hidden bg-[#24391d] py-2 text-sm text-white lg:block">
           <div className="container-pad flex items-center justify-between gap-6">
-            <p className="font-medium text-accent">{settings?.motto || "Growing in wisdom and favour"}</p>
+            <p className="font-medium text-accent">{settings?.motto || "Growing in wisdom and favour with God and Man"}</p>
             <p className="truncate text-white/85">{settings?.phone}</p>
           </div>
         </div>

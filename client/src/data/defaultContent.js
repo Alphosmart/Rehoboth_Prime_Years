@@ -10,20 +10,20 @@ const futureDate = (days) => new Date(Date.now() + days * 24 * 60 * 60 * 1000).t
 
 export const defaultSettings = {
   schoolName: "Rehoboth Prime Years",
-  motto: "Growing in wisdom and favour",
+  motto: "Growing in wisdom and favour with God and Man",
   logo: logoUrl,
   favicon: logoUrl,
-  primaryColor: "#7EA652",
-  secondaryColor: "#F5E011",
-  email: "info@rehobothprimeyears.edu.ng",
-  phone: "07046272361, 09018690022, 08180705629",
-  whatsapp: "+2347046272361",
-  address: "900241 Cadastral Street, Plot 5/7 Durumi District, Area 1, F.C.T. Abuja",
+  primaryColor: "#00843D",
+  secondaryColor: "#FFD200",
+  email: "rehobothprimeyears@gmail.com",
+  phone: "07034558581, 07015945362",
+  whatsapp: "+2347034558581",
+  address: "Plot 115, Christine Nwuche Street Golden Spring Estate, Duboyi, FCT Abuja.",
   facebookUrl: "",
   instagramUrl: "",
   youtubeUrl: "",
   googleMapEmbed: "",
-  footerText: "A caring Abuja school where children grow in wisdom, confidence, character, and favour with God and people.",
+  footerText: "A caring Abuja school where children grow in wisdom and favour with God and Man.",
   seoTitle: "Rehoboth Prime Years",
   seoDescription: "A warm Abuja school for early years, primary, and secondary learners, combining strong foundations, creativity, character, and family partnership."
 };

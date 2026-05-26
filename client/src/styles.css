@@ -24,7 +24,7 @@ body {
 }
 
 .btn-primary {
-  @apply btn bg-brand text-white hover:bg-[#4f6b2a] focus:ring-brand;
+  @apply btn bg-brand text-white hover:bg-[#006b31] focus:ring-brand;
 }
 
 .btn-secondary {
