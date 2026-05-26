@@ -18,13 +18,43 @@ const links = [
   ["Contact", "/contact"]
 ];
 
+function isProductionUnsafeMediaUrl(url) {
+  if (!url) return true;
+  if (url.startsWith("data:") || url.startsWith("blob:")) return false;
+  if (typeof window !== "undefined") {
+    try {
+      const parsedUrl = new URL(url, window.location.origin);
+      if (["localhost", "127.0.0.1", "::1"].includes(parsedUrl.hostname)) return window.location.hostname !== parsedUrl.hostname;
+    } catch {
+      return true;
+    }
+  }
+  return false;
+}
+
+function safeMediaUrl(url, fallback) {
+  return isProductionUnsafeMediaUrl(url) ? fallback : url;
+}
+
+function toWhatsAppNumber(value) {
+  const digits = value?.replace(/[^\d]/g, "") || "";
+  if (!digits) return "";
+  if (digits.startsWith("234")) return digits;
+  if (digits.startsWith("0")) return `234${digits.slice(1)}`;
+  return digits;
+}
+
 export default function PublicLayout() {
   const [open, setOpen] = useState(false);
   const { data: settings } = useApi(() => http.get("/settings"), [], { cacheKey: "settings-v3", fallbackData: defaultSettings });
-  const whatsapp = settings?.whatsapp?.replace(/[^\d]/g, "");
+  const whatsapp = toWhatsAppNumber(settings?.whatsapp);
+  const fallbackLogo = defaultSettings.logo;
+  const logoSrc = safeMediaUrl(settings?.logo, fallbackLogo);
+  const portalUrl = settings?.portalUrl || defaultSettings.portalUrl;
 
   useEffect(() => {
-    const href = settings?.favicon || settings?.logo;
+    const fallbackIcon = defaultSettings.favicon || fallbackLogo;
+    const href = safeMediaUrl(settings?.favicon || settings?.logo, fallbackIcon);
     if (!href) return;
     let link = document.querySelector("link[rel='icon']");
     if (!link) {
@@ -33,7 +63,18 @@ export default function PublicLayout() {
       document.head.appendChild(link);
     }
     link.href = href;
-  }, [settings?.favicon, settings?.logo]);
+    if (href === fallbackIcon) return;
+
+    let cancelled = false;
+    const img = new Image();
+    img.onerror = () => {
+      if (!cancelled) link.href = fallbackIcon;
+    };
+    img.src = href;
+    return () => {
+      cancelled = true;
+    };
+  }, [fallbackLogo, settings?.favicon, settings?.logo]);
 
   return (
     <div className="min-h-screen bg-[#FAFBF8]">
@@ -46,16 +87,27 @@ export default function PublicLayout() {
         </div>
         <div className="container-pad flex h-20 items-center justify-between">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            {settings?.logo ? <img src={settings.logo} alt="" className="h-12 w-12 rounded-md bg-white object-contain p-0.5 shadow-sm ring-1 ring-schoolLime/45" /> : <div className="h-11 w-11 rounded-md bg-brand" />}
+            <img
+              src={logoSrc}
+              alt=""
+              className="h-12 w-12 rounded-md bg-white object-contain p-0.5 shadow-sm ring-1 ring-schoolLime/45"
+              onError={(event) => {
+                if (event.currentTarget.dataset.fallbackApplied) return;
+                event.currentTarget.dataset.fallbackApplied = "true";
+                event.currentTarget.src = fallbackLogo;
+              }}
+            />
             <span className="max-w-[210px] text-lg font-black leading-tight text-slate-950">{settings?.schoolName || "School"}</span>
           </Link>
           <nav className="hidden items-center gap-1 lg:flex">
+            <a className="rounded-full bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-[#006b31]" href={portalUrl} target="_blank" rel="noreferrer">Login</a>
             {links.map(([label, to]) => <NavLink key={to} to={to} className={({ isActive }) => `rounded-full px-3 py-2 text-sm font-semibold ${isActive ? "bg-schoolLime/20 text-brand" : "text-slate-700 hover:bg-accent/20 hover:text-slate-950"}`}>{label}</NavLink>)}
           </nav>
           <button className="grid h-10 w-10 place-items-center rounded-md border border-schoolLime/45 bg-white text-brand lg:hidden" onClick={() => setOpen(!open)} aria-label="Toggle menu">{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
         {open && (
           <nav className="container-pad grid gap-2 border-t border-schoolLime/35 pb-5 pt-4 lg:hidden">
+            <a className="btn-primary" href={portalUrl} target="_blank" rel="noreferrer" onClick={() => setOpen(false)}>Login</a>
             {links.map(([label, to]) => <NavLink key={to} onClick={() => setOpen(false)} to={to} className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-schoolLime/20 hover:text-brand">{label}</NavLink>)}
           </nav>
         )}

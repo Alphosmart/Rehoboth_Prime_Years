@@ -2,7 +2,7 @@ import mathDayImage from "../pages/public/assets/Images/imgi_8_484631177_1807883
 import logoAsset from "../pages/public/assets/logo.jpg";
 
 const image = (text, bg = "7EA652", fg = "ffffff") => `https://placehold.co/1200x800/${bg}/${fg}?text=${encodeURIComponent(text)}`;
-const apiOrigin = (import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+const apiOrigin = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? "/api" : "http://localhost:5000/api")).replace(/\/api\/?$/, "");
 const upload = (filename) => `${apiOrigin}/uploads/${filename}`;
 const logoUrl = logoAsset;
 
@@ -17,8 +17,9 @@ export const defaultSettings = {
   secondaryColor: "#FFD200",
   email: "rehobothprimeyears@gmail.com",
   phone: "07034558581, 07015945362",
-  whatsapp: "+2347034558581",
+  whatsapp: "0703 455 8581",
   address: "Plot 115, Christine Nwuche Street Golden Spring Estate, Duboyi, FCT Abuja.",
+  portalUrl: "https://rehobothprimeyears.dpa.ng/",
   facebookUrl: "",
   instagramUrl: "",
   youtubeUrl: "",

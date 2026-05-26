@@ -4,11 +4,12 @@ import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import App from "./App";
 import { AuthProvider } from "./context/AuthContext";
+import logoAsset from "./pages/public/assets/logo.jpg";
 import "./styles.css";
 
 const favicon = document.createElement("link");
 favicon.rel = "icon";
-favicon.href = `https://placehold.co/512x512/7EA652/ffffff?text=${encodeURIComponent("RPY")}`;
+favicon.href = logoAsset;
 document.head.appendChild(favicon);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

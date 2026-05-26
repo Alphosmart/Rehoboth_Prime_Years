@@ -14,6 +14,7 @@ import SingleEvent from "./pages/public/SingleEvent";
 import Staff from "./pages/public/Staff";
 import FAQ from "./pages/public/FAQ";
 import Contact from "./pages/public/Contact";
+import Portal from "./pages/public/Portal";
 import NotFound from "./pages/public/NotFound";
 import Login from "./pages/admin/Login";
 import Dashboard from "./pages/admin/Dashboard";
@@ -50,6 +51,7 @@ export default function App() {
         <Route path="events/:slug" element={<SingleEvent />} />
         <Route path="staff" element={<Staff />} />
         <Route path="faq" element={<FAQ />} />
+        <Route path="portal" element={<Portal />} />
         <Route path="contact" element={<Contact />} />
         <Route path="privacy-policy" element={<SimplePage slug="privacy-policy" />} />
       </Route>

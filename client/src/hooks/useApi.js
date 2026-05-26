@@ -45,7 +45,7 @@ function writeCache(cacheKey, data) {
 
 function getInitialData(cacheKey, fallbackData) {
   const cachedData = readCache(cacheKey);
-  return hasContent(cachedData) ? cachedData : fallbackData;
+  return hasContent(cachedData) ? mergeWithFallback(fallbackData, cachedData) : fallbackData;
 }
 
 export function useApi(loader, deps = [], options = {}) {
@@ -57,7 +57,7 @@ export function useApi(loader, deps = [], options = {}) {
 
   const load = useCallback(async () => {
     const cachedData = readCache(cacheKey);
-    const initialData = hasContent(cachedData) ? cachedData : fallbackData;
+    const initialData = hasContent(cachedData) ? mergeWithFallback(fallbackData, cachedData) : fallbackData;
     setLoading(!hasContent(initialData));
     setError("");
     try {
@@ -68,7 +68,7 @@ export function useApi(loader, deps = [], options = {}) {
       setData(normalizedData);
       writeCache(cacheKey, normalizedData);
     } catch (err) {
-      const fallbackOrCachedData = hasContent(cachedData) ? cachedData : fallbackData;
+      const fallbackOrCachedData = hasContent(cachedData) ? mergeWithFallback(fallbackData, cachedData) : fallbackData;
       if (hasContent(fallbackOrCachedData)) {
         setData(normalizeLegacyBrand(fallbackOrCachedData));
         if (retryOnError && typeof window !== "undefined") {
