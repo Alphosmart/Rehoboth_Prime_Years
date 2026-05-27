@@ -1,12 +1,14 @@
 const { z } = require("zod");
 
 // Common field validators
+const emptyStringToUndefined = (value) => (value === "" ? undefined : value);
+const optionalNumberField = z.preprocess(emptyStringToUndefined, z.coerce.number().optional());
+const optionalSlugField = z.preprocess(emptyStringToUndefined, z.string().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase with hyphens").optional());
 const urlField = z.string().url().optional().or(z.literal(""));
 const imageField = z.string().url().optional().or(z.literal(""));
+const emailField = z.string().email().optional().or(z.literal(""));
 const titleField = z.string().min(1).max(200);
-const slugField = z.string().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase with hyphens");
-const optionalSlugField = slugField.optional().or(z.literal(""));
-const dateField = z.string().min(1).refine((value) => !Number.isNaN(Date.parse(value)), "Date must be valid").or(z.date());
+const dateField = z.string().min(1).refine((value) => !Number.isNaN(Date.parse(value)), "Invalid date").or(z.date());
 
 // Blog validation
 const blogSchema = z.object({
@@ -57,10 +59,10 @@ const staffSchema = z.object({
     biography: z.string().max(1000).optional(),
     qualification: z.string().max(200).optional(),
     image: imageField.optional(),
-    email: z.string().email().optional(),
+    email: emailField,
     linkedinUrl: urlField,
     xUrl: urlField,
-    order: z.number().optional(),
+    order: optionalNumberField,
     isActive: z.boolean().optional()
   })
 });
@@ -71,7 +73,7 @@ const faqSchema = z.object({
     question: z.string().min(5).max(300),
     answer: z.string().min(10).max(2000),
     category: z.string().max(100).optional(),
-    order: z.number().optional(),
+    order: optionalNumberField,
     isActive: z.boolean().optional()
   })
 });
@@ -94,7 +96,7 @@ const academicSchema = z.object({
     level: z.string().max(100).optional(),
     description: z.string().max(1000).optional(),
     image: imageField.optional(),
-    order: z.number().optional(),
+    order: optionalNumberField,
     isActive: z.boolean().optional()
   })
 });
