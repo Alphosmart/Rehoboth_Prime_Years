@@ -87,8 +87,8 @@ ADMIN_PASSWORD=
 
 The dashboard manages:
 
-- Website settings, branding, colors, contact details, SEO, footer
-- Homepage content and hero image
+- Website settings, logo, contact details, social links, search preview fields, footer
+- Homepage content and hero media, including uploaded files, direct media URLs, YouTube, and Vimeo
 - About page content, mission, vision, values
 - Admissions content
 - Academic programs

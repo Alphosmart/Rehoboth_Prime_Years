@@ -4,6 +4,8 @@ import http from "../../api/http";
 import { ImageUpload, MixedMediaUpload, RichTextEditor, TextArea, TextInput, VideoUpload } from "./FormControls";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import DataTable from "./DataTable";
+import MediaPreview from "../MediaPreview";
+import { detectMediaType } from "../../utils/media";
 
 function emptyFromFields(fields) {
   return fields.reduce((acc, field) => {
@@ -49,6 +51,15 @@ function getErrorMessage(error) {
     if (messages.length > 0) return messages.join(", ");
   }
   return error.response?.data?.message || error.message || "Unable to save. Please check the form and try again.";
+}
+
+function displayValue(field, value) {
+  if (field.type === "date" && typeof value === "string") return value.slice(0, 10);
+  return value;
+}
+
+function FieldHint({ children, className = "mb-2" }) {
+  return children ? <p className={`${className} text-xs leading-5 text-slate-500`}>{children}</p> : null;
 }
 
 export default function ResourceManager({ title, endpoint, fields, columns = ["title"], singleton = false }) {
@@ -131,7 +142,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
   function repeatableTitle(field, row, index) {
     const title = row.title || row.name || row.question || row.ctaLabel || `${field.label} ${index + 1}`;
     const detail = row.subtitle || row.description || row.message || row.media || row.image || "";
-    const mediaType = row.mediaType || (/\.(mp4|webm|mov)(\?|#|$)/i.test(detail || "") ? "video" : "image");
+    const mediaType = detectMediaType(detail, row.mediaType);
     return { title, detail, mediaType };
   }
 
@@ -169,16 +180,17 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
   }
 
   function input(field) {
-    const value = form[field.name] ?? "";
-    if (field.type === "textarea") return <TextArea key={field.name} label={field.label} value={value} onChange={(e) => setValue(field.name, e.target.value)} required={field.required} />;
-    if (field.type === "richtext") return <RichTextEditor key={field.name} label={field.label} value={value} onChange={(v) => setValue(field.name, v)} />;
-    if (field.type === "image") return <ImageUpload key={field.name} label={field.label} value={value} onChange={(v) => setValue(field.name, v)} required={field.required} />;
-    if (field.type === "video") return <VideoUpload key={field.name} label={field.label} value={value} onChange={(v) => setValue(field.name, v)} required={field.required} />;
+    const value = displayValue(field, form[field.name] ?? "");
+    if (field.type === "textarea") return <TextArea key={field.name} label={field.label} description={field.description} value={value} onChange={(e) => setValue(field.name, e.target.value)} required={field.required} />;
+    if (field.type === "richtext") return <RichTextEditor key={field.name} label={field.label} description={field.description} value={value} onChange={(v) => setValue(field.name, v)} />;
+    if (field.type === "image") return <ImageUpload key={field.name} label={field.label} description={field.description} value={value} onChange={(v) => setValue(field.name, v)} required={field.required} />;
+    if (field.type === "video") return <VideoUpload key={field.name} label={field.label} description={field.description} value={value} onChange={(v) => setValue(field.name, v)} required={field.required} />;
     if (field.type === "media") {
       return (
         <MixedMediaUpload
           key={field.name}
           label={field.label}
+          description={field.description}
           value={value}
           mediaType={form[field.mediaTypeField]}
           onChange={(nextValue, nextType) => {
@@ -189,8 +201,8 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
         />
       );
     }
-    if (field.type === "checkbox") return <label key={field.name} className="flex items-center gap-2 text-sm"><input type="checkbox" checked={Boolean(form[field.name])} onChange={(e) => setValue(field.name, e.target.checked)} /> {field.label}</label>;
-    if (field.type === "select") return <label key={field.name} className="block"><span className="label">{field.label}</span><select className="input" value={value} onChange={(e) => setValue(field.name, e.target.value)} required={field.required}>{field.options.map((o) => <option key={o} value={o}>{o}</option>)}</select></label>;
+    if (field.type === "checkbox") return <div key={field.name}><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={Boolean(form[field.name])} onChange={(e) => setValue(field.name, e.target.checked)} /> {field.label}</label><FieldHint className="mt-1">{field.description}</FieldHint></div>;
+    if (field.type === "select") return <label key={field.name} className="block"><span className="label">{field.label}</span><FieldHint>{field.description}</FieldHint><select className="input" value={value} onChange={(e) => setValue(field.name, e.target.value)} required={field.required}>{field.options.map((o) => <option key={o} value={o}>{o}</option>)}</select></label>;
     if (field.type === "repeatable") {
       const savedRows = Array.isArray(value) ? value : [];
       const rows = repeatableItemHasContent(field, savedRows[savedRows.length - 1]) || savedRows.length === 0 ? [...savedRows, emptyRepeatableItem(field)] : savedRows;
@@ -200,6 +212,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
             <span className="label mb-0">{field.label}</span>
             <button type="button" className="btn-secondary px-3 py-1" onClick={() => addRepeatableItem(field)}>Add</button>
           </div>
+          <FieldHint>{field.description}</FieldHint>
           <div className="grid gap-3">
             {rows.map((row, index) => (
               <div className="rounded-md border border-slate-200 bg-slate-50 p-3" key={`${field.name}-${index}`}>
@@ -208,11 +221,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
                     <div className="flex min-w-0 items-start gap-3">
                       {(row.media || row.image) && (
                         <div className="shrink-0">
-                          {repeatableTitle(field, row, index).mediaType === "video" ? (
-                            <video src={row.media || row.image} className="h-16 w-16 rounded object-cover" muted />
-                          ) : (
-                            <img src={row.media || row.image} alt="" className="h-16 w-16 rounded object-cover" />
-                          )}
+                          <MediaPreview value={row.media || row.image} mediaType={repeatableTitle(field, row, index).mediaType} className="h-16 w-16 rounded object-cover" title={`${repeatableTitle(field, row, index).title} preview`} />
                         </div>
                       )}
                       <div className="min-w-0 flex-1">
@@ -236,13 +245,16 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
                       {field.fields.map((item) => {
                         const itemValue = row[item.name] || "";
                         const className = item.type === "textarea" || item.type === "image" || item.type === "video" || item.type === "media" ? "md:col-span-2" : "";
-                        if (item.type === "image") return <div className={className} key={item.name}><ImageUpload label={item.label} value={itemValue} onChange={(next) => setRepeatableValue(field.name, index, item.name, next)} /></div>;
-                        if (item.type === "video") return <div className={className} key={item.name}><VideoUpload label={item.label} value={itemValue} onChange={(next) => setRepeatableValue(field.name, index, item.name, next)} /></div>;
+                        if (item.type === "image") return <div className={className} key={item.name}><ImageUpload label={item.label} description={item.description} value={itemValue} onChange={(next) => setRepeatableValue(field.name, index, item.name, next)} /></div>;
+                        if (item.type === "video") return <div className={className} key={item.name}><VideoUpload label={item.label} description={item.description} value={itemValue} onChange={(next) => setRepeatableValue(field.name, index, item.name, next)} /></div>;
                         if (item.type === "checkbox") {
                           return (
-                            <label className="flex items-center gap-2 text-sm" key={item.name}>
-                              <input type="checkbox" checked={row[item.name] !== false} onChange={(e) => setRepeatableValue(field.name, index, item.name, e.target.checked)} /> {item.label}
-                            </label>
+                            <div key={item.name}>
+                              <label className="flex items-center gap-2 text-sm">
+                                <input type="checkbox" checked={row[item.name] !== false} onChange={(e) => setRepeatableValue(field.name, index, item.name, e.target.checked)} /> {item.label}
+                              </label>
+                              <FieldHint className="mt-1">{item.description}</FieldHint>
+                            </div>
                           );
                         }
                         if (item.type === "media") {
@@ -250,6 +262,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
                             <div className={className} key={item.name}>
                               <MixedMediaUpload
                                 label={item.label}
+                                description={item.description}
                                 value={itemValue}
                                 mediaType={row[item.mediaTypeField]}
                                 onChange={(nextValue, nextType) => {
@@ -263,6 +276,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
                         return (
                           <label className={className} key={item.name}>
                             <span className="label">{item.label}</span>
+                            <FieldHint>{item.description}</FieldHint>
                             {item.type === "textarea" ? (
                               <textarea className="input min-h-24" value={itemValue} onChange={(e) => setRepeatableValue(field.name, index, item.name, e.target.value)} />
                             ) : (
@@ -286,7 +300,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
         </div>
       );
     }
-    return <TextInput key={field.name} label={field.label} type={field.type || "text"} value={value} onChange={(e) => setValue(field.name, e.target.value)} required={field.required} />;
+    return <TextInput key={field.name} label={field.label} description={field.description} type={field.type || "text"} value={value} onChange={(e) => setValue(field.name, e.target.value)} required={field.required} />;
   }
 
   return (

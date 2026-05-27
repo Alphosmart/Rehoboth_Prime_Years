@@ -25,7 +25,9 @@ import ErrorMessage from "../../components/public/ErrorMessage";
 import SectionTitle from "../../components/public/SectionTitle";
 import { BlogCard, EventCard, GalleryCard, TestimonialCard } from "../../components/public/Cards";
 import ContactForm from "../../components/public/ContactForm";
+import MediaPreview from "../../components/MediaPreview";
 import { setSeo } from "../../utils/seo";
+import { detectMediaType } from "../../utils/media";
 import {
   defaultAcademics,
   defaultBlogs,
@@ -150,6 +152,8 @@ export default function Home() {
     return [primarySlide];
   }, [data]);
   const slide = heroSlides[activeSlide] || heroSlides[0] || {};
+  const slideMediaValue = slide.media || slide.image || "https://placehold.co/1600x900";
+  const slideMediaType = slide.media ? detectMediaType(slide.media, slide.mediaType) : "image";
 
   useEffect(() => {
     setActiveSlide(0);
@@ -157,7 +161,7 @@ export default function Home() {
 
   useEffect(() => {
     if (heroSlides.length < 2) return undefined;
-    if (slide.mediaType === "video" && slide.media) {
+    if (slideMediaType === "video" && slide.media) {
       const timer = window.setTimeout(() => {
         setActiveSlide((current) => (current + 1) % heroSlides.length);
       }, VIDEO_FALLBACK_MS);
@@ -167,7 +171,7 @@ export default function Home() {
       setActiveSlide((current) => (current + 1) % heroSlides.length);
     }, IMAGE_SLIDE_MS);
     return () => window.clearTimeout(timer);
-  }, [heroSlides.length, slide.media, slide.mediaType]);
+  }, [heroSlides.length, slide.media, slideMediaType]);
 
   function goToSlide(index) {
     setActiveSlide((index + heroSlides.length) % heroSlides.length);
@@ -182,23 +186,17 @@ export default function Home() {
     <>
       <section className="relative overflow-hidden bg-[#24391d] text-white">
         <div className="absolute inset-0">
-          {slide.mediaType === "video" && slide.media ? (
-            <video
-              key={slide.media}
-              className="h-full w-full object-cover opacity-60 transition-opacity duration-500"
-              poster={slide.image || undefined}
-              autoPlay
-              muted
-              playsInline
-              onEnded={() => {
-                if (heroSlides.length > 1) goToSlide(activeSlide + 1);
-              }}
-            >
-              <source src={slide.media} />
-            </video>
-          ) : (
-            <img src={slide.media || slide.image || "https://placehold.co/1600x900"} alt="" className="h-full w-full object-cover opacity-60 transition-opacity duration-500" />
-          )}
+          <MediaPreview
+            value={slideMediaValue}
+            mediaType={slideMediaType}
+            className="h-full w-full object-cover opacity-60 transition-opacity duration-500"
+            title={`${slide.title || "Hero"} media`}
+            background
+            poster={slide.image}
+            onEnded={() => {
+              if (heroSlides.length > 1) goToSlide(activeSlide + 1);
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b1b]/90 via-[#00843d]/75 to-[#ffd200]/25" />
         </div>
         <div className="container-pad relative flex min-h-[680px] items-center py-20">

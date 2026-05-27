@@ -49,15 +49,13 @@ Use this page as a quick health check for the website content.
 Use **Settings** to manage global website information:
 
 - School name and motto
-- Logo and favicon
-- Primary and secondary colors
+- Logo
 - Email, phone, WhatsApp, and address
 - Social media links
-- Google Map embed
 - Footer text
-- SEO title and SEO description
+- Search preview title and description
 
-These values appear across the public website, especially in the header, footer, contact page, and search previews.
+These values appear across the public website, especially in the header, footer, contact page, and search engine previews.
 
 ## Homepage
 
@@ -69,16 +67,16 @@ Use **Homepage** to control the public home page:
 - About preview
 - Why Choose Us items
 - Admissions call-to-action
-- Homepage SEO fields
+- Search preview title and description
 
 For carousel slides, click **Add** to create each slide. Each slide can have a title, subtitle, media file or URL, button label, and button link.
 
-If the hero media is a video, the homepage uses it as the hero background. You can upload a local video file from the admin dashboard or paste a direct video URL. If you paste a URL manually, select whether it is an image or video.
+For hero media, you can upload a local image/video, paste a direct image/video URL, or paste a YouTube or Vimeo link. Links to ordinary pages on other websites may not display unless they are direct media or supported video links.
 
 Carousel slides can be managed individually:
 
 - Use **Show main hero media** to show or hide the main hero media without deleting it.
-- Use **Active** to show or hide a slide without deleting it.
+- Use **Show slide** to show or hide a carousel slide without deleting it.
 - Edit the slide fields directly, then click **Save changes**.
 - Use **Remove media** to clear the image or video from a slide.
 - Use **Remove item** to delete a slide from the carousel.
@@ -94,6 +92,11 @@ The About page includes content, mission, vision, and core values. The Privacy P
 
 Rich text fields support basic formatting such as bold, italic, and lists.
 
+Search preview fields:
+
+- **SEO title**: The title Google may show for the page. Keep it clear and under 60 characters.
+- **SEO description**: The short sentence Google may show under the title. Aim for 140-160 characters.
+
 ## Blog
 
 Use **Blog** to manage news and article posts.
@@ -101,23 +104,18 @@ Use **Blog** to manage news and article posts.
 Main fields:
 
 - Title
-- Slug
-- Excerpt
+- Short summary
 - Content
 - Featured image
 - Category
-- Tags
 - Author
 - Status
-- SEO title and description
+- SEO title
+- SEO description
 
 Set **Status** to `published` when the post should appear publicly. Use `draft` for work that should remain hidden from public visitors.
 
-The slug is the URL-friendly part of the post link. Use lowercase words separated by hyphens, for example:
-
-```text
-school-open-day-2026
-```
+Post links are created automatically from the title.
 
 ## Gallery
 
@@ -140,14 +138,13 @@ Use **Events** to publish upcoming or past school events.
 Fields:
 
 - Title
-- Slug
 - Image
 - Date
 - Time
 - Location
 - Description
 
-Use clear event titles and accurate dates. The public event page uses the date and location to help parents and visitors understand when and where the event happens.
+Use clear event titles and accurate dates. Event links are created automatically from the title.
 
 ## Academics
 
@@ -159,10 +156,9 @@ Fields:
 - Level
 - Description
 - Image
-- Order
-- Active
+- Show on website
 
-Use **Order** to control display order. Lower numbers appear earlier. Disable **Active** if a program should be hidden without deleting it.
+Turn off **Show on website** if a program should be hidden without deleting it.
 
 ## Admissions
 
@@ -174,8 +170,9 @@ Fields:
 - Content
 - Requirements
 - Process steps
-- CTA text
-- SEO title and description
+- Call-to-action text
+- SEO title
+- SEO description
 
 Enter requirements one per line. For process steps, click **Add** and enter the step title and description.
 
@@ -191,12 +188,9 @@ Fields:
 - Qualification
 - Image
 - Email
-- LinkedIn URL
-- X URL
-- Order
-- Active
+- Show on website
 
-Use **Order** to control display order. Disable **Active** to hide a staff member without deleting the profile.
+Turn off **Show on website** to hide a staff member without deleting the profile.
 
 ## Testimonials
 
@@ -208,9 +202,9 @@ Fields:
 - Role
 - Message
 - Image
-- Active
+- Show on website
 
-Keep testimonials concise and accurate. Disable **Active** to hide a testimonial without deleting it.
+Keep testimonials concise and accurate. Turn off **Show on website** to hide a testimonial without deleting it.
 
 ## FAQ
 
@@ -221,10 +215,9 @@ Fields:
 - Question
 - Answer
 - Category
-- Order
-- Active
+- Show on website
 
-Use categories to group related questions, such as Admissions, Academics, Fees, or General. Use **Order** to control display sequence.
+Use categories to group related questions, such as Admissions, Academics, Fees, or General.
 
 ## Messages
 
@@ -240,19 +233,6 @@ Each message shows:
 - Read status
 
 Use **Read** after following up with a message. Use **Delete** only when the message is no longer needed.
-
-## Admin Users
-
-Use **Admin Users** to manage who can access the dashboard.
-
-Fields:
-
-- Name
-- Email
-- Password
-- Active
-
-Only create accounts for trusted staff. Disable **Active** to block an account without deleting it. Use strong passwords and avoid sharing accounts.
 
 ## Change Password
 
@@ -270,9 +250,9 @@ Passwords must be at least 8 characters. Use a unique password that is not reuse
 - Keep titles short and clear.
 - Use high-quality images with good lighting.
 - Avoid uploading very large images when possible.
-- Keep SEO titles and descriptions specific to the page.
+- Use direct image/video links, YouTube links, or Vimeo links for homepage media.
 - Use `published` only when blog content is ready for public viewing.
-- Prefer hiding items with **Active** before deleting them permanently.
+- Prefer turning off **Show on website** before deleting items permanently.
 
 ## Security Notes
 
@@ -280,4 +260,3 @@ Passwords must be at least 8 characters. Use a unique password that is not reuse
 - Log out after using a shared computer.
 - Do not paste unknown scripts or unsafe HTML into rich text fields.
 - Upload only trusted image files.
-- Remove admin access for users who no longer need it.

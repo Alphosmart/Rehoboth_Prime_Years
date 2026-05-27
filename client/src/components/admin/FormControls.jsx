@@ -1,20 +1,26 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import http from "../../api/http";
 import toast from "react-hot-toast";
+import MediaPreview from "../MediaPreview";
+import { detectMediaType } from "../../utils/media";
 
-export function Field({ label, children }) {
-  return <label className="block"><span className="label">{label}</span>{children}</label>;
+function Hint({ children }) {
+  return children ? <p className="mb-2 text-xs leading-5 text-slate-500">{children}</p> : null;
 }
 
-export function TextInput({ label, ...props }) {
-  return <Field label={label}><input className="input" {...props} /></Field>;
+export function Field({ label, description, children }) {
+  return <label className="block"><span className="label">{label}</span><Hint>{description}</Hint>{children}</label>;
 }
 
-export function TextArea({ label, ...props }) {
-  return <Field label={label}><textarea className="input min-h-28" {...props} /></Field>;
+export function TextInput({ label, description, ...props }) {
+  return <Field label={label} description={description}><input className="input" {...props} /></Field>;
 }
 
-export function RichTextEditor({ label, value, onChange }) {
+export function TextArea({ label, description, ...props }) {
+  return <Field label={label} description={description}><textarea className="input min-h-28" {...props} /></Field>;
+}
+
+export function RichTextEditor({ label, description, value, onChange }) {
   const ref = useRef(null);
   function command(name) {
     document.execCommand(name, false, null);
@@ -23,6 +29,7 @@ export function RichTextEditor({ label, value, onChange }) {
   return (
     <div>
       <span className="label">{label}</span>
+      <Hint>{description}</Hint>
       <div className="mb-2 flex gap-2">
         <button type="button" className="btn-secondary px-3 py-1" onClick={() => command("bold")}>B</button>
         <button type="button" className="btn-secondary px-3 py-1 italic" onClick={() => command("italic")}>I</button>
@@ -40,21 +47,58 @@ export function RichTextEditor({ label, value, onChange }) {
   );
 }
 
-function MediaUpload({ accept, label, placeholder, preview, successMessage, value, onChange, required = false }) {
+function MediaUpload({ accept, label, description, placeholder, preview, successMessage, value, onChange, required = false }) {
+  const [linkDraft, setLinkDraft] = useState("");
+  const fileInput = useRef(null);
+  const manualValue = useRef("");
+
+  useEffect(() => {
+    if (value !== manualValue.current) setLinkDraft("");
+  }, [value]);
+
   async function upload(file) {
     if (!file) return;
+    const replacing = Boolean(value);
     const form = new FormData();
     form.append("image", file);
     const res = await http.post("/uploads", form, { headers: { "Content-Type": "multipart/form-data" } });
+    manualValue.current = "";
+    setLinkDraft("");
     onChange(res.data.url);
-    toast.success(successMessage);
+    if (fileInput.current) fileInput.current.value = "";
+    toast.success(replacing ? successMessage.replace("uploaded", "replaced") : successMessage);
   }
+
+  function remove() {
+    manualValue.current = "";
+    setLinkDraft("");
+    onChange("");
+  }
+
+  function pasteLink(nextValue) {
+    manualValue.current = nextValue;
+    setLinkDraft(nextValue);
+    onChange(nextValue);
+  }
+
   return (
     <div>
       <span className="label">{label}</span>
+      <Hint>{description}</Hint>
       {preview(value)}
-      <input className="input" type="file" accept={accept} onChange={(e) => upload(e.target.files?.[0])} />
-      <input className="input mt-2" placeholder={placeholder} value={value || ""} onChange={(e) => onChange(e.target.value)} required={required} />
+      <input ref={fileInput} className="input" type="file" accept={accept} onChange={(e) => upload(e.target.files?.[0])} />
+      <input
+        className="input mt-2"
+        placeholder={value ? "Paste a new link to replace current media" : placeholder}
+        value={linkDraft}
+        onChange={(e) => pasteLink(e.target.value)}
+        required={required && !value}
+      />
+      {value && (
+        <button type="button" className="mt-2 text-sm font-medium text-red-600" onClick={remove}>
+          Remove media
+        </button>
+      )}
     </div>
   );
 }
@@ -83,31 +127,63 @@ export function VideoUpload(props) {
   );
 }
 
-export function MixedMediaUpload({ label, value, mediaType, onChange, required = false }) {
+export function MixedMediaUpload({ label, description, value, mediaType, onChange, required = false }) {
+  const [linkDraft, setLinkDraft] = useState("");
+  const fileInput = useRef(null);
+  const manualValue = useRef("");
+
+  useEffect(() => {
+    if (value !== manualValue.current) setLinkDraft("");
+  }, [value]);
+
   async function upload(file) {
     if (!file) return;
+    const replacing = Boolean(value);
     const form = new FormData();
     form.append("image", file);
     const res = await http.post("/uploads", form, { headers: { "Content-Type": "multipart/form-data" } });
+    manualValue.current = "";
+    setLinkDraft("");
     onChange(res.data.url, res.data.resourceType === "video" ? "video" : "image");
-    toast.success(`${res.data.resourceType === "video" ? "Video" : "Image"} uploaded`);
+    if (fileInput.current) fileInput.current.value = "";
+    toast.success(`${res.data.resourceType === "video" ? "Video" : "Image"} ${replacing ? "replaced" : "uploaded"}`);
   }
 
-  const previewType = mediaType || (/\.(mp4|webm|mov)(\?|#|$)/i.test(value || "") ? "video" : "image");
+  const previewType = detectMediaType(value, mediaType);
+
+  function remove() {
+    manualValue.current = "";
+    setLinkDraft("");
+    onChange("", previewType);
+  }
+
+  function pasteLink(nextValue) {
+    manualValue.current = nextValue;
+    setLinkDraft(nextValue);
+    onChange(nextValue, detectMediaType(nextValue, previewType));
+  }
 
   return (
     <div>
       <span className="label">{label}</span>
-      {value && previewType === "video" && <video src={value} className="mb-3 h-28 w-44 rounded-md object-cover" muted controls />}
-      {value && previewType !== "video" && <img src={value} alt="" className="mb-3 h-28 w-44 rounded-md object-cover" />}
-      <input className="input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" onChange={(e) => upload(e.target.files?.[0])} />
-      <input className="input mt-2" placeholder="Or paste image/video URL" value={value || ""} onChange={(e) => onChange(e.target.value, previewType)} required={required} />
-      <select className="input mt-2" value={previewType} onChange={(e) => onChange(value || "", e.target.value)}>
-        <option value="image">Image</option>
-        <option value="video">Video</option>
-      </select>
+      <Hint>{description}</Hint>
+      {value && <MediaPreview value={value} mediaType={previewType} className="mb-3 h-28 w-44 rounded-md object-cover" title={`${label} preview`} />}
+      <input ref={fileInput} className="input" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" onChange={(e) => upload(e.target.files?.[0])} />
+      <input
+        className="input mt-2"
+        placeholder={value ? "Paste a new link to replace current media" : "Or paste an image, video, YouTube, or Vimeo link"}
+        value={linkDraft}
+        onChange={(e) => pasteLink(e.target.value)}
+        required={required && !value}
+      />
       {value && (
-        <button type="button" className="mt-2 text-sm font-medium text-red-600" onClick={() => onChange("", previewType)}>
+        <select className="input mt-2" value={previewType} onChange={(e) => onChange(value || "", e.target.value)}>
+          <option value="image">Image</option>
+          <option value="video">Video</option>
+        </select>
+      )}
+      {value && (
+        <button type="button" className="mt-2 text-sm font-medium text-red-600" onClick={remove}>
           Remove media
         </button>
       )}

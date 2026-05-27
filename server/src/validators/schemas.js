@@ -5,13 +5,14 @@ const urlField = z.string().url().optional().or(z.literal(""));
 const imageField = z.string().url().optional().or(z.literal(""));
 const titleField = z.string().min(1).max(200);
 const slugField = z.string().min(1).max(200).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase with hyphens");
-const dateField = z.string().datetime().or(z.date());
+const optionalSlugField = slugField.optional().or(z.literal(""));
+const dateField = z.string().min(1).refine((value) => !Number.isNaN(Date.parse(value)), "Date must be valid").or(z.date());
 
 // Blog validation
 const blogSchema = z.object({
   body: z.object({
     title: titleField,
-    slug: slugField,
+    slug: optionalSlugField,
     excerpt: z.string().min(1).max(500),
     content: z.string().min(10),
     featuredImage: imageField,
@@ -39,7 +40,7 @@ const gallerySchema = z.object({
 const eventSchema = z.object({
   body: z.object({
     title: titleField,
-    slug: slugField.optional(),
+    slug: optionalSlugField,
     image: imageField.optional(),
     date: dateField,
     time: z.string().optional(),
