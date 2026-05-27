@@ -34,6 +34,7 @@ import {
   TestimonialManager
 } from "./pages/admin/Managers";
 import { ADMIN_LOGIN_PATH, ADMIN_LOGIN_ROUTE } from "./config/admin";
+import UsersManager from "./pages/admin/UsersManager";
 
 export default function App() {
   return (
@@ -70,7 +71,7 @@ export default function App() {
           <Route path="testimonials" element={<TestimonialManager />} />
           <Route path="faqs" element={<FAQManager />} />
           <Route path="messages" element={<Messages />} />
-          <Route path="users" element={<Navigate to="/admin" replace />} />
+          <Route path="users" element={<UsersManager />} />
           <Route path="change-password" element={<ChangePassword />} />
           <Route path="logout" element={<Navigate to={ADMIN_LOGIN_PATH} replace />} />
         </Route>
