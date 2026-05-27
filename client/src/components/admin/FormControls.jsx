@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import http from "../../api/http";
 import toast from "react-hot-toast";
 
@@ -16,10 +16,28 @@ export function TextArea({ label, ...props }) {
 
 export function RichTextEditor({ label, value, onChange }) {
   const ref = useRef(null);
-  function command(name) {
-    document.execCommand(name, false, null);
-    onChange(ref.current?.innerHTML || "");
+  const lastValueRef = useRef(null);
+
+  useEffect(() => {
+    const editor = ref.current;
+    const nextValue = value || "";
+    if (!editor) return;
+    if (document.activeElement === editor && lastValueRef.current === nextValue) return;
+    if (editor.innerHTML !== nextValue) editor.innerHTML = nextValue;
+    lastValueRef.current = nextValue;
+  }, [value]);
+
+  function emit(nextValue) {
+    lastValueRef.current = nextValue;
+    onChange(nextValue);
   }
+
+  function command(name) {
+    ref.current?.focus();
+    document.execCommand(name, false, null);
+    emit(ref.current?.innerHTML || "");
+  }
+
   return (
     <div>
       <span className="label">{label}</span>
@@ -33,8 +51,7 @@ export function RichTextEditor({ label, value, onChange }) {
         className="min-h-40 rounded-md border border-slate-300 bg-white p-3 text-sm outline-none focus:border-brand focus:ring-2 focus:ring-schoolLime/40"
         contentEditable
         suppressContentEditableWarning
-        onInput={(e) => onChange(e.currentTarget.innerHTML)}
-        dangerouslySetInnerHTML={{ __html: value || "" }}
+        onInput={(e) => emit(e.currentTarget.innerHTML)}
       />
     </div>
   );

@@ -82,6 +82,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
   }
 
   function setRepeatableValue(name, index, key, value) {
+    setExpandedRepeatable((current) => ({ ...current, [name]: index }));
     setForm((current) => {
       const next = [...(current[name] || [])];
       next[index] = { ...next[index], [key]: value };
