@@ -5,15 +5,19 @@ const PORT = process.env.PORT || 5000;
 const RETRY_MS = 5000;
 
 app.listen(PORT, () => {
-  console.log(`API running on port ${PORT}`);
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`API running on port ${PORT}`);
+  }
 });
 
 async function connectWithRetry() {
   try {
     await connectDB();
   } catch (error) {
-    console.error("MongoDB connection failed. Retrying in 5 seconds.");
-    console.error(error.message);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("MongoDB connection failed. Retrying in 5 seconds.");
+      console.error(error.message);
+    }
     setTimeout(connectWithRetry, RETRY_MS);
   }
 }

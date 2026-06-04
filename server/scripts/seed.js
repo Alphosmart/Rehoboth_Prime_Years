@@ -115,6 +115,14 @@ async function seed() {
       slug: "privacy-policy",
       title: "Privacy Policy",
       content: "We collect only the information needed to respond to enquiries, support admissions, and operate school services responsibly."
+    },
+    {
+      slug: "head-of-school-welcome",
+      title: "Head of School Welcome",
+      principalName: "Adetoro Yesufu",
+      principalImage: "/uploads/principal.jpg",
+      excerpt: "A warm welcome message from the Head of School",
+      content: "<h2>Welcome to Rehoboth Prime Years</h2><p>At Rehoboth Prime Years, we believe that every child is uniquely created by God, endowed with purpose, potential and the ability to make a positive impact on the world. It is my pleasure to welcome you to a school community where academic excellence, Christian values and genuine care for children come together to create an exceptional learning experience.</p><p>As a school, we are committed to maintaining the highest academic standards. Our curriculum is thoughtfully designed to challenge, inspire and equip learners with the knowledge, critical thinking skills, creativity and confidence they need to thrive in an ever-changing world. We believe that excellence is not merely about achieving outstanding results but about developing a lifelong love for learning and the discipline required to succeed in every area of life.</p><p>At the heart of Rehoboth Prime Years is our unwavering commitment to Christian education. We are a faith-based school grounded in biblical worldviews, where God's Word serves as the foundation for teaching, learning, and character development. We strive to nurture children who not only excel academically but also grow in wisdom, integrity, compassion and a deep understanding of God's purpose for their lives. Through daily interactions, classroom instruction and school activities, we seek to help our pupils develop a personal relationship with God while learning to serve others with love and humility.</p><p>One of our greatest strengths is our team of highly experienced, skilled and dedicated educators. Our teachers are passionate professionals who understand that every child learns differently and deserves individual attention, encouragement and support. Beyond their academic expertise, they are caring mentors who genuinely invest in the growth and well-being of every child entrusted to our care. We foster a safe, nurturing and inclusive environment where children feel valued, respected and inspired to reach their full potential.</p><p>At Rehoboth Prime Years, we see education as a partnership between the school and families. Together, we work to build strong foundations that prepare children not only for academic success but also for meaningful lives of leadership, service and godly influence.</p><p>Whether you are considering joining our school family or are already part of our community, we invite you to discover the difference that a Christ-centered, excellence-driven education can make in the life of your child.</p><p>We look forward to partnering with you as we continue growing in wisdom and favour with God and man.</p><p><strong>Warm regards,</strong></p><p><strong>Adetoro Yesufu</strong><br/>Head of School<br/>Rehoboth Prime Years</p>"
     }
   ]);
 
@@ -173,8 +181,18 @@ async function seed() {
   ]);
 
   await StaffMember.create([
-    { name: "Head of School", role: "Head of School", qualification: "School Leadership", biography: "The Head of School leads teaching quality, learner care, school culture, and partnership with families.", image: placeholder("Head of School"), order: 1 },
-    { name: "Learning Lead", role: "Learning Lead", qualification: "Curriculum and Learner Support", biography: "The Learning Lead supports classroom routines, assessment, learner progress, and creative academic programmes.", image: placeholder("Learning Lead"), order: 2 }
+    {
+      name: "Adetoro Yesufu",
+      role: "Head of School",
+      qualification: "School Leadership & Strategic Vision",
+      biography: "Adetoro Yesufu leads Rehoboth Prime Years with a passionate commitment to academic excellence, Christian education, and genuine care for every child. His vision shapes a school community where learners are known, their potential is strengthened, and they grow as future leaders grounded in faith and integrity.",
+      image: "/uploads/principal.jpg",
+      email: "adetoro@rehobothprimeyears.com",
+      isActive: true,
+      order: 1
+    },
+    { name: "Head of School", role: "Head of School", qualification: "School Leadership", biography: "The Head of School leads teaching quality, learner care, school culture, and partnership with families.", image: placeholder("Head of School"), order: 2 },
+    { name: "Learning Lead", role: "Learning Lead", qualification: "Curriculum and Learner Support", biography: "The Learning Lead supports classroom routines, assessment, learner progress, and creative academic programmes.", image: placeholder("Learning Lead"), order: 3 }
   ]);
 
   await Testimonial.create([

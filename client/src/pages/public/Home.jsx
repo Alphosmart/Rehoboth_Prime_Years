@@ -54,9 +54,9 @@ const quickLinks = [
     to: "/academics"
   },
   {
-    title: "Student Life",
-    text: "Clubs, creative work, sports, values, presentations, and celebrations make each term feel alive.",
-    to: "#student-life"
+    title: "Head of School",
+    text: "A warm welcome from Adetoro Yesufu, Head of School, about our vision, values, and commitment to your child.",
+    to: "/head-of-school"
   }
 ];
 
