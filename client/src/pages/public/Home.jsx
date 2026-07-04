@@ -189,7 +189,7 @@ export default function Home() {
           <MediaPreview
             value={slideMediaValue}
             mediaType={slideMediaType}
-            className="h-full w-full object-cover opacity-60 transition-opacity duration-500"
+            className={`h-full w-full object-cover transition-opacity duration-500 ${slide.media || slide.image ? "opacity-100" : "opacity-60"}`}
             title={`${slide.title || "Hero"} media`}
             background
             poster={slide.image}
@@ -197,7 +197,10 @@ export default function Home() {
               if (heroSlides.length > 1) goToSlide(activeSlide + 1);
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b1b]/90 via-[#00843d]/75 to-[#ffd200]/25" />
+          {/* Colour overlay only when the hero has no image/video, so real media shows in true colour. */}
+          {!(slide.media || slide.image) && (
+            <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b1b]/90 via-[#00843d]/75 to-[#ffd200]/25" />
+          )}
         </div>
         <div className="container-pad relative flex min-h-[680px] items-center py-20">
           <div className="max-w-4xl">

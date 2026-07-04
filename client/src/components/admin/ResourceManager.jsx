@@ -6,6 +6,7 @@ import ConfirmDeleteModal from "./ConfirmDeleteModal";
 import DataTable from "./DataTable";
 import MediaPreview from "../MediaPreview";
 import { detectMediaType } from "../../utils/media";
+import { scrollToTop } from "../../utils/scroll";
 
 function emptyFromFields(fields) {
   return fields.reduce((acc, field) => {
@@ -62,7 +63,7 @@ function FieldHint({ children, className = "mb-2" }) {
   return children ? <p className={`${className} text-xs leading-5 text-slate-500`}>{children}</p> : null;
 }
 
-export default function ResourceManager({ title, endpoint, fields, columns = ["title"], singleton = false }) {
+export default function ResourceManager({ title, endpoint, fields, columns = ["title"], singleton = false, intro = "" }) {
   const [items, setItems] = useState([]);
   const [form, setForm] = useState(emptyFromFields(fields));
   const [editing, setEditing] = useState(null);
@@ -71,7 +72,17 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [activeFilter, setActiveFilter] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [reorderMode, setReorderMode] = useState(false);
   const ITEMS_PER_PAGE = 10;
+
+  const hasOrder = fields.some((field) => field.name === "order");
+  const hasStatus = columns.includes("status");
+  const hasActive = columns.includes("isActive") || columns.includes("active");
 
   async function load() {
     try {
@@ -87,6 +98,67 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
   }
 
   useEffect(() => { load(); }, [endpoint]);
+
+  // --- Filtering (client-side over the loaded list) ---
+  const filteredItems = items.filter((item) => {
+    if (search !== "" && !Object.values(item).some((val) => String(val).toLowerCase().includes(search.toLowerCase()))) return false;
+    if (statusFilter && item.status !== statusFilter) return false;
+    if (activeFilter === "active" && !(item.isActive ?? item.active)) return false;
+    if (activeFilter === "inactive" && (item.isActive ?? item.active)) return false;
+    if (dateFrom && new Date(item.createdAt || item.date) < new Date(dateFrom)) return false;
+    if (dateTo && new Date(item.createdAt || item.date) > new Date(new Date(dateTo).setHours(23, 59, 59, 999))) return false;
+    return true;
+  });
+
+  const statusOptions = [...new Set(items.map((item) => item.status).filter(Boolean))];
+  const visibleItems = reorderMode
+    ? [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    : filteredItems.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+
+  function toggleSelect(id) {
+    setSelectedIds((current) => (current.includes(id) ? current.filter((x) => x !== id) : [...current, id]));
+  }
+
+  function toggleSelectAll() {
+    const pageIds = visibleItems.map((item) => item._id);
+    const allSelected = pageIds.every((id) => selectedIds.includes(id));
+    setSelectedIds(allSelected ? selectedIds.filter((id) => !pageIds.includes(id)) : [...new Set([...selectedIds, ...pageIds])]);
+  }
+
+  async function bulkDelete() {
+    if (!selectedIds.length) return;
+    try {
+      await http.post(`${endpoint}/bulk-delete`, { ids: selectedIds });
+      toast.success(`Deleted ${selectedIds.length} item(s)`);
+      setSelectedIds([]);
+      load();
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
+  }
+
+  async function bulkUpdate(update) {
+    if (!selectedIds.length) return;
+    try {
+      await http.patch(`${endpoint}/bulk-update`, { ids: selectedIds, update });
+      toast.success(`Updated ${selectedIds.length} item(s)`);
+      setSelectedIds([]);
+      load();
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+    }
+  }
+
+  async function saveReorder(orderedItems) {
+    setItems(orderedItems); // optimistic
+    try {
+      await http.patch(`${endpoint}/reorder`, { items: orderedItems.map((item, index) => ({ id: item._id, order: index })) });
+      toast.success("Order saved");
+    } catch (error) {
+      toast.error(getErrorMessage(error));
+      load();
+    }
+  }
 
   function setValue(name, value) {
     setForm((current) => ({ ...current, [name]: value }));
@@ -150,7 +222,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
   function edit(item) {
     setEditing(item._id);
     setForm({ ...emptyFromFields(fields), ...item, tags: item.tags?.join(", ") || item.tags, coreValues: item.coreValues?.join("\n") || item.coreValues, requirements: item.requirements?.join("\n") || item.requirements });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToTop();
   }
 
   async function submit(e) {
@@ -307,6 +379,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
   return (
     <div>
       <h1 className="text-3xl font-black text-slate-950">{title}</h1>
+      {intro && <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">{intro}</p>}
       <form onSubmit={submit} className="mt-6 grid gap-5">
         {groupFields(fields).map((group) => (
           <section className="card p-5" key={group.title}>
@@ -323,38 +396,77 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
       </form>
       {!singleton && (
         <div className="card mt-8">
-          <div className="border-b border-slate-200 p-4">
+          <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 p-4">
             <input
               type="text"
               placeholder="Search items..."
               className="input max-w-xs"
               value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setCurrentPage(1);
-              }}
+              onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
+              disabled={reorderMode}
             />
+            {hasStatus && statusOptions.length > 0 && (
+              <select className="input max-w-[10rem]" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setCurrentPage(1); }} disabled={reorderMode}>
+                <option value="">All statuses</option>
+                {statusOptions.map((option) => <option key={option} value={option}>{option}</option>)}
+              </select>
+            )}
+            {hasActive && (
+              <select className="input max-w-[10rem]" value={activeFilter} onChange={(e) => { setActiveFilter(e.target.value); setCurrentPage(1); }} disabled={reorderMode}>
+                <option value="">All</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            )}
+            <label className="flex items-center gap-1 text-xs text-slate-600">From
+              <input type="date" className="input" value={dateFrom} onChange={(e) => { setDateFrom(e.target.value); setCurrentPage(1); }} disabled={reorderMode} />
+            </label>
+            <label className="flex items-center gap-1 text-xs text-slate-600">To
+              <input type="date" className="input" value={dateTo} onChange={(e) => { setDateTo(e.target.value); setCurrentPage(1); }} disabled={reorderMode} />
+            </label>
+            {(search || statusFilter || activeFilter || dateFrom || dateTo) && !reorderMode && (
+              <button type="button" className="text-sm font-medium text-brand" onClick={() => { setSearch(""); setStatusFilter(""); setActiveFilter(""); setDateFrom(""); setDateTo(""); setCurrentPage(1); }}>Clear</button>
+            )}
+            {hasOrder && (
+              <button type="button" className="btn-secondary ml-auto px-3 py-1" onClick={() => { setReorderMode((v) => !v); setSelectedIds([]); }}>
+                {reorderMode ? "Done reordering" : "Reorder"}
+              </button>
+            )}
           </div>
+
+          {selectedIds.length > 0 && !reorderMode && (
+            <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 bg-brand/5 p-3 text-sm">
+              <span className="font-medium text-slate-700">{selectedIds.length} selected</span>
+              <button type="button" className="btn-secondary px-3 py-1" onClick={() => setSelectedIds([])}>Clear</button>
+              {hasActive && <button type="button" className="btn-secondary px-3 py-1" onClick={() => bulkUpdate({ isActive: true })}>Set active</button>}
+              {hasActive && <button type="button" className="btn-secondary px-3 py-1" onClick={() => bulkUpdate({ isActive: false })}>Set inactive</button>}
+              {hasStatus && <button type="button" className="btn-secondary px-3 py-1" onClick={() => bulkUpdate({ status: "published" })}>Publish</button>}
+              {hasStatus && <button type="button" className="btn-secondary px-3 py-1" onClick={() => bulkUpdate({ status: "draft" })}>Unpublish</button>}
+              <button type="button" className="ml-auto rounded-md bg-red-600 px-3 py-1 font-medium text-white hover:bg-red-700" onClick={bulkDelete}>Delete selected</button>
+            </div>
+          )}
+
+          {reorderMode && <p className="border-b border-slate-200 bg-amber-50 px-4 py-2 text-xs text-amber-700">Drag rows by the handle to reorder. Changes save automatically.</p>}
+
           <div className="overflow-x-auto">
             <DataTable
               loading={loading}
               columns={columns}
-              items={items
-                .filter((item) =>
-                  search === "" ||
-                  Object.values(item).some((val) =>
-                    String(val).toLowerCase().includes(search.toLowerCase())
-                  )
-                )
-                .slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)}
+              items={visibleItems}
               onEdit={edit}
               onDelete={setPendingDelete}
+              selectable={!reorderMode}
+              selectedIds={selectedIds}
+              onToggleSelect={toggleSelect}
+              onToggleSelectAll={toggleSelectAll}
+              reorderable={reorderMode}
+              onReorder={saveReorder}
             />
           </div>
-          {items.length > ITEMS_PER_PAGE && (
+          {!reorderMode && filteredItems.length > ITEMS_PER_PAGE && (
             <div className="border-t border-slate-200 p-4 flex items-center justify-between text-sm">
               <p className="text-slate-600">
-                Showing {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, items.length)}-{Math.min(currentPage * ITEMS_PER_PAGE, items.length)} of {items.length}
+                Showing {Math.min((currentPage - 1) * ITEMS_PER_PAGE + 1, filteredItems.length)}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredItems.length)} of {filteredItems.length}
               </p>
               <div className="flex gap-2">
                 <button
@@ -368,7 +480,7 @@ export default function ResourceManager({ title, endpoint, fields, columns = ["t
                 <button
                   type="button"
                   className="btn-secondary px-3 py-1 disabled:opacity-50"
-                  disabled={currentPage * ITEMS_PER_PAGE >= items.length}
+                  disabled={currentPage * ITEMS_PER_PAGE >= filteredItems.length}
                   onClick={() => setCurrentPage((p) => p + 1)}
                 >
                   Next

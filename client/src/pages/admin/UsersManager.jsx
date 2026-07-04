@@ -4,6 +4,7 @@ import http from "../../api/http";
 import { TextInput } from "../../components/admin/FormControls";
 import ConfirmDeleteModal from "../../components/admin/ConfirmDeleteModal";
 import DataTable from "../../components/admin/DataTable";
+import { scrollToTop } from "../../utils/scroll";
 
 const initialFormState = {
   name: "",
@@ -55,7 +56,7 @@ export default function UsersManager() {
       password: "",
       isActive: user.isActive !== false
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToTop();
   }
 
   async function submit(event) {
