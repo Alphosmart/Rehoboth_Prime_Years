@@ -21,7 +21,7 @@ export default function HeadOfSchoolWelcome() {
 
   return (
     <main className="container-pad py-14">
-      <p className="text-sm font-semibold uppercase tracking-wide text-accent">Leadership</p>
+      <p className="text-sm font-semibold uppercase tracking-wide text-navy">Leadership</p>
       <h1 className="mt-2 text-4xl font-black text-slate-950">{data.title || "Head of School"}</h1>
 
       <div className="mt-12 grid gap-10 md:grid-cols-3">
@@ -37,7 +37,7 @@ export default function HeadOfSchoolWelcome() {
             )}
             <div className="p-6">
               <h2 className="text-xl font-bold text-slate-950">{data.principalName}</h2>
-              <p className="mt-1 text-sm font-medium text-accent">Head of School</p>
+              <p className="mt-1 text-sm font-medium text-navy">Head of School</p>
               {data.principalQualification && (
                 <p className="mt-3 text-sm text-slate-600">{data.principalQualification}</p>
               )}

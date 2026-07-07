@@ -1,5 +1,8 @@
 import mathDayImage from "../pages/public/assets/Images/imgi_8_484631177_18078833383729664_355856379700708766_n.jpg";
 import logoAsset from "../pages/public/assets/logo.jpg";
+import mainHeroImage from "../pages/public/assets/Images/Main Hero Image.jpeg";
+import visionImage from "../pages/public/assets/Images/20260211_073700.jpg";
+import missionImage from "../pages/public/assets/Images/IMG_8963.jpg";
 
 const image = (text, bg = "7EA652", fg = "ffffff") => `https://placehold.co/1200x800/${bg}/${fg}?text=${encodeURIComponent(text)}`;
 const apiOrigin = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? "/api" : "http://localhost:5000/api")).replace(/\/api\/?$/, "");
@@ -24,7 +27,7 @@ export const defaultSettings = {
   instagramUrl: "",
   youtubeUrl: "",
   googleMapEmbed: "",
-  footerText: "A caring Abuja school where children grow in wisdom and favour with God and Man.",
+  footerText: "A caring school in Abuja where children grow in wisdom and favour with God and Man.",
   seoTitle: "Rehoboth Prime Years",
   seoDescription: "A warm Abuja school for early years, primary, and secondary learners, combining strong foundations, creativity, character, and family partnership."
 };
@@ -32,34 +35,40 @@ export const defaultSettings = {
 export const defaultHomepage = {
   heroTitle: "Rehoboth Prime Years",
   heroSubtitle: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
-  heroImage: upload("a4e11c9b-e4ed-45a8-b25a-169a2743ac0b.jpg"),
-  heroMedia: upload("a4e11c9b-e4ed-45a8-b25a-169a2743ac0b.jpg"),
+  heroImage: mainHeroImage,
+  heroMedia: mainHeroImage,
   heroMediaType: "image",
   heroMediaActive: true,
   heroSlides: [
     {
       title: "Rehoboth Prime Years",
-      subtitle: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
-      media: upload("91f9408e-a25f-4baa-a2d9-e65378db468f.jpg"),
+      subtitle: "Growing in wisdom and favour with God and Man.",
+      media: mainHeroImage,
       mediaType: "image",
-      image: upload("91f9408e-a25f-4baa-a2d9-e65378db468f.jpg"),
+      image: mainHeroImage,
       isActive: true,
       ctaLabel: "Start Admissions",
       ctaLink: "/admissions"
     },
     {
-      title: "Foundations that make learning feel possible",
-      subtitle: "Numeracy, literacy, science discovery, values, and creative expression are taught with patience and structure.",
-      image: image("Foundations"),
-      ctaLabel: "Explore Academics",
-      ctaLink: "/academics"
+      title: "Our Vision",
+      subtitle: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond.",
+      media: visionImage,
+      mediaType: "image",
+      image: visionImage,
+      isActive: true,
+      ctaLabel: "About Us",
+      ctaLink: "/about"
     },
     {
-      title: "A school day full of discovery and care",
-      subtitle: "Learners build friendships, practice responsibility, ask better questions, and celebrate progress in visible ways.",
-      image: image("Discovery and Care", "F5E011", "1B1B1B"),
-      ctaLabel: "Visit Us",
-      ctaLink: "/contact"
+      title: "Our Mission",
+      subtitle: "We are dedicated to nurturing the spiritual, academic and personal growth of each child through the use of biblical-integrated curriculum, innovative teaching techniques, and cutting edge technology.",
+      media: missionImage,
+      mediaType: "image",
+      image: missionImage,
+      isActive: true,
+      ctaLabel: "Explore Academics",
+      ctaLink: "/academics"
     }
   ],
   aboutPreview: "To passionately nurture future Christian leaders, equipped with academic excellence, grounded in faith, and committed to making a transformative impact on their communities and beyond",
@@ -76,19 +85,20 @@ export const defaultHomepage = {
 };
 
 export const defaultAcademics = [
-  { _id: "default-academics-early-years", title: "Early Years", level: "Early Years", description: "Playful routines, phonics, number sense, social confidence, and gentle independence for young learners.", image: image("Early Years") },
-  { _id: "default-academics-primary", title: "Primary School", level: "Primary", description: "Core literacy, numeracy, science, social studies, values, creative work, and confidence-building presentations.", image: image("Primary School") },
-  { _id: "default-academics-secondary", title: "Secondary School", level: "Secondary", description: "A structured pathway for independent study, problem-solving, leadership, technology, and future readiness.", image: image("Secondary School") }
+  { _id: "default-academics-early-years", title: "Early Years", level: "Early Years", description: "Playful routines, phonics, number sense, social confidence, and gentle independence for young learners.", image: image("Early Years"), curriculum: ["Playgroup", "Prenursery", "Nursery 1", "Nursery 2"] },
+  { _id: "default-academics-primary", title: "Primary School", level: "Primary", description: "Core literacy, numeracy, science, social studies, values, creative work, and confidence-building presentations.", image: image("Primary School"), curriculum: ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"] },
+  { _id: "default-academics-junior-secondary", title: "Junior Secondary", level: "Junior Secondary", description: "A broad foundation across core subjects that builds study skills, discipline, and confidence through Grades 7 to 9.", image: image("Junior Secondary"), curriculum: ["Grade 7", "Grade 8", "Grade 9"] },
+  { _id: "default-academics-senior-secondary", title: "Senior Secondary", level: "Senior Secondary", description: "A focused pathway for specialisation, examinations, leadership, and readiness for higher education through Grades 10 to 12.", image: image("Senior Secondary"), curriculum: ["Grade 10", "Grade 11", "Grade 12"] }
 ];
 
 export const defaultAdmissions = {
   title: "Admissions",
   content: "<p>Choosing a school is personal. Our admissions process is designed to help families understand the Rehoboth Prime Years environment and help the school understand each child's learning needs.</p><p>Families are welcome to make enquiries, book a school visit, and speak with our admissions team before completing registration.</p>",
-  requirements: ["Completed application form", "Birth certificate", "Recent passport photograph", "Previous school records where available", "Parent or guardian contact information"],
+  requirements: ["Completed application form", "Birth certificate", "Recent passport photograph", "Previous school records", "Parent or guardian contact information"],
   processSteps: [
     { title: "Enquire", description: "Call, message, or complete the contact form so the admissions team can guide you." },
     { title: "Visit", description: "Tour the school, ask questions, and meet members of the team." },
-    { title: "Placement Review", description: "We review age, records, and readiness so each child starts in the right class." },
+    { title: "Placement Test and Review", description: "The child sits a placement test which we review alongside age and readiness so each child starts in the right class." },
     { title: "Registration", description: "Submit required documents and complete the registration process." },
     { title: "Welcome", description: "New families receive orientation details and settling-in support." }
   ],

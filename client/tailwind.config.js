@@ -11,6 +11,7 @@ export default {
         ink: "#172026",
         brand: "#00843D",
         accent: "#FFD200",
+        navy: "#0A1F44",
         schoolGreen: "#00843D",
         schoolLime: "#A8D05F",
         schoolBlue: "#0057B8",

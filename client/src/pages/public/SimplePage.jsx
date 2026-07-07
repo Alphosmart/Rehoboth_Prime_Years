@@ -17,7 +17,7 @@ export default function SimplePage({ slug: fixedSlug }) {
   setSeo(data.seoTitle || data.title, data.seoDescription || data.excerpt);
   return (
     <main className="container-pad py-14">
-      <p className="text-sm font-semibold uppercase tracking-wide text-accent">{titles[slug] || "Page"}</p>
+      <p className="text-sm font-semibold uppercase tracking-wide text-navy">{titles[slug] || "Page"}</p>
       <h1 className="mt-2 text-4xl font-black text-slate-950">{data.title}</h1>
       {data.excerpt && <p className="mt-4 max-w-3xl text-lg text-slate-600">{data.excerpt}</p>}
       <article className="prose mt-8 max-w-none" dangerouslySetInnerHTML={{ __html: data.content }} />
