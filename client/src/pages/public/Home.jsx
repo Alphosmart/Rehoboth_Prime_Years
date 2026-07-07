@@ -112,7 +112,7 @@ const admissionsSteps = [
 const subjects = ["Phonics and literacy", "Numeracy", "Science discovery", "Social studies", "Bible and values", "ICT foundations", "Creative arts"];
 const activities = ["Creative studio", "Music and movement", "Sports and wellness", "Reading circles", "STEM play", "Class presentations"];
 const schoolEvents = ["Mathematics discovery day", "Family open morning", "Book and reading week", "Cultural showcase", "Young innovators fair", "Thanksgiving and awards celebration"];
-const IMAGE_SLIDE_MS = 6500;
+const IMAGE_SLIDE_MS = 8000;
 const VIDEO_FALLBACK_MS = 45000;
 
 function normalizeHeroSlide(slide = {}) {
