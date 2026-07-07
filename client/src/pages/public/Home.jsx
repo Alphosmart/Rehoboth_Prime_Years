@@ -187,9 +187,10 @@ export default function Home() {
       <section className="relative overflow-hidden bg-[#24391d] text-white">
         <div className="absolute inset-0">
           <MediaPreview
+            key={activeSlide}
             value={slideMediaValue}
             mediaType={slideMediaType}
-            className={`h-full w-full object-contain object-center transition-opacity duration-500 ${slide.media || slide.image ? "opacity-100" : "opacity-60"}`}
+            className={`h-full w-full object-contain object-center transition-opacity duration-500 ${slide.media || slide.image ? "opacity-100" : "opacity-60"} ${slideMediaType === "image" ? "hero-zoom" : ""}`}
             title={`${slide.title || "Hero"} media`}
             background
             poster={slide.image}
