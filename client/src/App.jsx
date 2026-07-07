@@ -8,6 +8,7 @@ import SimplePage from "./pages/public/SimplePage";
 import HeadOfSchoolWelcome from "./pages/public/HeadOfSchoolWelcome";
 import Academics from "./pages/public/Academics";
 import Admissions from "./pages/public/Admissions";
+import Apply from "./pages/public/Apply";
 import Blog from "./pages/public/Blog";
 import SingleBlog from "./pages/public/SingleBlog";
 import Gallery from "./pages/public/Gallery";
@@ -52,6 +53,8 @@ export default function App() {
         <Route path="head-of-school" element={<HeadOfSchoolWelcome />} />
         <Route path="academics" element={<Academics />} />
         <Route path="admissions" element={<Admissions />} />
+        <Route path="admissions/apply" element={<Apply />} />
+        <Route path="apply" element={<Apply />} />
         <Route path="blog" element={<Blog />} />
         <Route path="blog/:slug" element={<SingleBlog />} />
         <Route path="gallery" element={<Gallery />} />

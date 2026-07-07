@@ -45,7 +45,7 @@ const quickLinks = [
   },
   {
     title: "Our Story",
-    text: "A caring Abuja school community built around attention, structure, confidence, and family trust.",
+    text: "A caring school in Abuja built around attention, structure, confidence, and family trust.",
     to: "/about"
   },
   {
@@ -197,8 +197,11 @@ export default function Home() {
               if (heroSlides.length > 1) goToSlide(activeSlide + 1);
             }}
           />
-          {/* Colour overlay only when the hero has no image/video, so real media shows in true colour. */}
-          {!(slide.media || slide.image) && (
+          {/* Dark scrim over real media so the yellow accent text/labels stay legible on a dark backing;
+              branded gradient only when there is no image/video. */}
+          {slide.media || slide.image ? (
+            <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/65 to-black/35" />
+          ) : (
             <div className="absolute inset-0 bg-gradient-to-r from-[#1b1b1b]/90 via-[#00843d]/75 to-[#ffd200]/25" />
           )}
         </div>
@@ -274,7 +277,7 @@ export default function Home() {
       <section className="bg-white py-16">
         <div className="container-pad grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-lg border border-accent/60 bg-accent/20 p-8">
-            <div className="flex items-center gap-3"><Sparkles className="text-accent" /><h2 className="text-3xl font-black text-slate-950">OUR VISION</h2></div>
+            <div className="flex items-center gap-3"><Sparkles className="text-navy" /><h2 className="text-3xl font-black text-slate-950">OUR VISION</h2></div>
             <p className="mt-4 leading-7 text-slate-700">
               {visionStatement}
             </p>
@@ -352,7 +355,7 @@ export default function Home() {
             <div className="card overflow-hidden" key={p._id}>
               <img src={p.image || "https://placehold.co/800x500"} className="h-44 w-full object-cover" alt="" />
               <div className="p-5">
-                <p className="text-sm font-semibold text-accent">{p.level}</p>
+                <p className="text-sm font-semibold text-navy">{p.level}</p>
                 <h3 className="mt-1 font-bold">{p.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-600">{p.description}</p>
               </div>

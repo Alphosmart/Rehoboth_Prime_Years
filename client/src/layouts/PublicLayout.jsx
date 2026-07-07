@@ -102,14 +102,14 @@ export default function PublicLayout() {
             <span className="max-w-[210px] text-lg font-black leading-tight text-slate-950">{settings?.schoolName || "School"}</span>
           </Link>
           <nav className="hidden items-center gap-1 lg:flex">
-            <a className="rounded-full bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-[#006b31]" href={portalUrl} target="_blank" rel="noreferrer">Login</a>
+            <a className="rounded-full bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-[#006b31]" href={portalUrl} target="_blank" rel="noreferrer">Portal login</a>
             {links.map(([label, to]) => <NavLink key={to} to={to} className={({ isActive }) => `rounded-full px-3 py-2 text-sm font-semibold ${isActive ? "bg-schoolLime/20 text-brand" : "text-slate-700 hover:bg-accent/20 hover:text-slate-950"}`}>{label}</NavLink>)}
           </nav>
           <button className="grid h-10 w-10 place-items-center rounded-md border border-schoolLime/45 bg-white text-brand lg:hidden" onClick={() => setOpen(!open)} aria-label="Toggle menu">{open ? <X size={20} /> : <Menu size={20} />}</button>
         </div>
         {open && (
           <nav className="container-pad grid gap-2 border-t border-schoolLime/35 pb-5 pt-4 lg:hidden">
-            <a className="btn-primary" href={portalUrl} target="_blank" rel="noreferrer" onClick={() => setOpen(false)}>Login</a>
+            <a className="btn-primary" href={portalUrl} target="_blank" rel="noreferrer" onClick={() => setOpen(false)}>Portal login</a>
             {links.map(([label, to]) => <NavLink key={to} onClick={() => setOpen(false)} to={to} className="rounded-md px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-schoolLime/20 hover:text-brand">{label}</NavLink>)}
           </nav>
         )}

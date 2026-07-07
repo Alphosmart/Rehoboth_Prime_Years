@@ -95,6 +95,7 @@ const academicSchema = z.object({
     title: titleField,
     level: z.string().max(100).optional(),
     description: z.string().max(1000).optional(),
+    curriculum: z.array(z.string()).optional(),
     image: imageField.optional(),
     order: optionalNumberField,
     isActive: z.boolean().optional()
