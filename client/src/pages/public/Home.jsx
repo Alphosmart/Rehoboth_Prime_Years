@@ -161,7 +161,7 @@ export default function Home() {
 
   useEffect(() => {
     if (heroSlides.length < 2) return undefined;
-    if (slideMediaType === "video" && slide.media) {
+    if ((slideMediaType === "video" || slideMediaType === "embed") && slide.media) {
       const timer = window.setTimeout(() => {
         setActiveSlide((current) => (current + 1) % heroSlides.length);
       }, VIDEO_FALLBACK_MS);

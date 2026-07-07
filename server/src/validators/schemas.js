@@ -122,14 +122,14 @@ const homepageSchema = z.object({
     heroTitle: z.string().max(200).optional(),
     heroSubtitle: z.string().max(500).optional(),
     heroMedia: z.string().optional(),
-    heroMediaType: z.enum(["image", "video"]).optional(),
+    heroMediaType: z.enum(["image", "video", "embed"]).optional(),
     heroMediaActive: z.boolean().optional(),
     heroSlides: z.array(z.object({
       isActive: z.boolean().optional(),
       title: z.string().max(200).optional(),
       subtitle: z.string().max(500).optional(),
       media: z.string().optional(),
-      mediaType: z.enum(["image", "video"]).optional(),
+      mediaType: z.enum(["image", "video", "embed"]).optional(),
       ctaLabel: z.string().max(100).optional(),
       ctaLink: z.string().optional()
     })).optional(),
