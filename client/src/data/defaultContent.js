@@ -87,7 +87,8 @@ export const defaultHomepage = {
 export const defaultAcademics = [
   { _id: "default-academics-early-years", title: "Early Years", level: "Early Years", description: "Playful routines, phonics, number sense, social confidence, and gentle independence for young learners.", image: image("Early Years"), curriculum: ["Playgroup", "Prenursery", "Nursery 1", "Nursery 2"] },
   { _id: "default-academics-primary", title: "Primary School", level: "Primary", description: "Core literacy, numeracy, science, social studies, values, creative work, and confidence-building presentations.", image: image("Primary School"), curriculum: ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"] },
-  { _id: "default-academics-secondary", title: "Secondary School", level: "Secondary", description: "A structured pathway for independent study, problem-solving, leadership, technology, and future readiness.", image: image("Secondary School"), curriculum: ["Junior — Grade 7", "Junior — Grade 8", "Junior — Grade 9", "Senior — Grade 10", "Senior — Grade 11", "Senior — Grade 12"] }
+  { _id: "default-academics-junior-secondary", title: "Junior Secondary", level: "Junior Secondary", description: "A broad foundation across core subjects that builds study skills, discipline, and confidence through Grades 7 to 9.", image: image("Junior Secondary"), curriculum: ["Grade 7", "Grade 8", "Grade 9"] },
+  { _id: "default-academics-senior-secondary", title: "Senior Secondary", level: "Senior Secondary", description: "A focused pathway for specialisation, examinations, leadership, and readiness for higher education through Grades 10 to 12.", image: image("Senior Secondary"), curriculum: ["Grade 10", "Grade 11", "Grade 12"] }
 ];
 
 export const defaultAdmissions = {
