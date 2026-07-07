@@ -189,7 +189,7 @@ export default function Home() {
           <MediaPreview
             value={slideMediaValue}
             mediaType={slideMediaType}
-            className={`h-full w-full object-cover transition-opacity duration-500 ${slide.media || slide.image ? "opacity-100" : "opacity-60"}`}
+            className={`h-full w-full object-contain object-center transition-opacity duration-500 ${slide.media || slide.image ? "opacity-100" : "opacity-60"}`}
             title={`${slide.title || "Hero"} media`}
             background
             poster={slide.image}
