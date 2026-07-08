@@ -40,7 +40,7 @@ function vimeoId(value) {
   return id;
 }
 
-export function getVideoEmbedUrl(value, { background = false } = {}) {
+export function getVideoEmbedUrl(value, { background = false, muted = true } = {}) {
   const youtube = youtubeId(value);
   if (youtube) {
     const params = new URLSearchParams({
@@ -50,8 +50,8 @@ export function getVideoEmbedUrl(value, { background = false } = {}) {
     });
     if (background) {
       params.set("autoplay", "1");
-      params.set("mute", "1");
-      params.set("controls", "0");
+      params.set("mute", muted ? "1" : "0");
+      params.set("controls", muted ? "0" : "1");
       params.set("loop", "1");
       params.set("playlist", youtube);
     }
@@ -67,9 +67,9 @@ export function getVideoEmbedUrl(value, { background = false } = {}) {
     });
     if (background) {
       params.set("autoplay", "1");
-      params.set("muted", "1");
+      params.set("muted", muted ? "1" : "0");
       params.set("loop", "1");
-      params.set("background", "1");
+      params.set("background", muted ? "1" : "0");
     }
     return `https://player.vimeo.com/video/${vimeo}?${params.toString()}`;
   }
@@ -82,7 +82,8 @@ export function isDirectVideoUrl(value) {
 }
 
 export function detectMediaType(value, fallback = "image") {
-  if (getVideoEmbedUrl(value) || isDirectVideoUrl(value)) return "video";
+  if (getVideoEmbedUrl(value)) return "embed"; // YouTube / Vimeo and other embeddable links
+  if (isDirectVideoUrl(value)) return "video"; // direct/uploaded video files
   if (imagePattern.test(String(value || ""))) return "image";
   return fallback || "image";
 }

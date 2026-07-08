@@ -1,18 +1,25 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
-// Resets scroll position to the top on every route change. Handles both the
-// public site (window scroll) and the admin panel, whose content lives in an
-// independently-scrolling column marked with [data-scroll-container].
+// Resets the window scroll position on route change so each new page starts at
+// the top. In-page anchor links (e.g. /#faith) scroll to their target instead.
 export default function ScrollToTop() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    if (hash) {
+      const el = document.getElementById(hash.slice(1));
+      if (el) {
+        el.scrollIntoView();
+        return;
+      }
+    }
     window.scrollTo(0, 0);
+    // The admin panel scrolls inside an independent column, not the window.
     document.querySelectorAll("[data-scroll-container]").forEach((el) => {
       el.scrollTop = 0;
     });
-  }, [pathname]);
+  }, [pathname, hash]);
 
   return null;
 }
