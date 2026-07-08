@@ -38,7 +38,12 @@ const databaseStates = ["disconnected", "connected", "connecting", "disconnectin
 
 app.get("/api/health", (req, res) => {
   const database = databaseStates[mongoose.connection.readyState] || "unknown";
-  res.json({ status: "ok", database });
+  res.json({
+    status: database === "connected" ? "ok" : "degraded",
+    database,
+    uptime: Math.round(process.uptime()),
+    timestamp: new Date().toISOString()
+  });
 });
 app.use("/api", requireTrustedOrigin);
 app.use("/api", routes);

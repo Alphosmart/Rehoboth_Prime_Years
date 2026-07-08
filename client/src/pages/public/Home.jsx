@@ -14,7 +14,9 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
-  UsersRound
+  UsersRound,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
@@ -124,6 +126,7 @@ function normalizeHeroSlide(slide = {}) {
 export default function Home() {
   const { settings } = useOutletContext();
   const [activeSlide, setActiveSlide] = useState(0);
+  const [heroMuted, setHeroMuted] = useState(true);
   const home = useApi(() => http.get("/homepage"), [], { cacheKey: "homepage", fallbackData: defaultHomepage });
   const blogs = useApi(() => http.get("/blogs?status=published"), [], { cacheKey: "blogs-published", fallbackData: defaultBlogs });
   const gallery = useApi(() => http.get("/gallery"), [], { cacheKey: "gallery", fallbackData: defaultGallery });
@@ -159,6 +162,11 @@ export default function Home() {
     setActiveSlide(0);
   }, [heroSlides.length]);
 
+  // Start each slide muted (browsers require it for autoplay); the viewer opts in.
+  useEffect(() => {
+    setHeroMuted(true);
+  }, [activeSlide]);
+
   useEffect(() => {
     if (heroSlides.length < 2) return undefined;
     if ((slideMediaType === "video" || slideMediaType === "embed") && slide.media) {
@@ -193,6 +201,7 @@ export default function Home() {
             className={`h-full w-full object-contain object-center transition-opacity duration-500 ${slide.media || slide.image ? "opacity-100" : "opacity-60"} ${slideMediaType === "image" ? "hero-zoom" : ""}`}
             title={`${slide.title || "Hero"} media`}
             background
+            muted={heroMuted}
             poster={slide.image}
             onEnded={() => {
               if (heroSlides.length > 1) goToSlide(activeSlide + 1);
@@ -228,6 +237,17 @@ export default function Home() {
               ))}
             </div>
           </div>
+          {(slideMediaType === "video" || slideMediaType === "embed") && (
+            <button
+              type="button"
+              onClick={() => setHeroMuted((m) => !m)}
+              aria-label={heroMuted ? "Unmute video" : "Mute video"}
+              className="absolute bottom-8 left-4 z-20 inline-flex items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-sm font-medium text-white backdrop-blur transition hover:bg-black/70 sm:left-6 lg:left-8"
+            >
+              {heroMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              <span>{heroMuted ? "Tap for sound" : "Mute"}</span>
+            </button>
+          )}
           {heroSlides.length > 1 && (
             <>
               <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 gap-2">
