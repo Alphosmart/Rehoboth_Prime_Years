@@ -8,7 +8,7 @@ const contactSchema = z.object({
   email: z.string().trim().email().max(180),
   phone: z.string().trim().max(40).optional().default(""),
   subject: z.string().trim().min(2).max(160),
-  message: z.string().trim().min(5).max(3000)
+  message: z.string().trim().min(5).max(8000)
 });
 
 exports.createMessage = asyncHandler(async (req, res) => {
