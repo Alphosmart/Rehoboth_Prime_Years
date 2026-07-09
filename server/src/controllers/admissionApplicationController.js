@@ -89,7 +89,7 @@ function requiredAmountKobo(config) {
 }
 
 function admissionPaymentIsRequired(config) {
-  return requiredAmountKobo(config) > 0;
+  return Boolean(config?.enforceAdmissionPayment) && requiredAmountKobo(config) > 0;
 }
 
 function generateApplicationNumber() {

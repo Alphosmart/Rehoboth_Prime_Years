@@ -18,11 +18,11 @@ async function getAdmissionsConfig() {
 }
 
 function requiredAmountKobo(config) {
-  return Math.max(0, Math.round((Number(config.admissionFormFee) || 0) * 100));
+  return Math.max(0, Math.round((Number(config?.admissionFormFee) || 0) * 100));
 }
 
 function paymentIsRequired(config) {
-  return requiredAmountKobo(config) > 0;
+  return Boolean(config?.enforceAdmissionPayment) && requiredAmountKobo(config) > 0;
 }
 
 function paymentCurrency(config) {

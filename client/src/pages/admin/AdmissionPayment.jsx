@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { CreditCard } from "lucide-react";
+import { CreditCard, LockKeyhole, UnlockKeyhole } from "lucide-react";
 import http from "../../api/http";
 
 const initialForm = {
   admissionFormFee: 0,
   admissionPaymentCurrency: "NGN",
-  admissionPaymentProvider: "paystack"
+  admissionPaymentProvider: "paystack",
+  enforceAdmissionPayment: false
 };
 
 function formatCurrency(amount, currency) {
@@ -31,7 +32,8 @@ export default function AdmissionPayment() {
           ...initialForm,
           admissionFormFee: res.data?.admissionFormFee ?? 0,
           admissionPaymentCurrency: res.data?.admissionPaymentCurrency || "NGN",
-          admissionPaymentProvider: res.data?.admissionPaymentProvider || "paystack"
+          admissionPaymentProvider: res.data?.admissionPaymentProvider || "paystack",
+          enforceAdmissionPayment: Boolean(res.data?.enforceAdmissionPayment)
         });
       })
       .catch((error) => toast.error(error?.response?.data?.message || "Unable to load payment settings."))
@@ -47,6 +49,14 @@ export default function AdmissionPayment() {
     setForm((current) => ({ ...current, [name]: value }));
   }
 
+  function setPaymentEnforcement(enabled) {
+    if (enabled && Number(form.admissionFormFee) <= 0) {
+      toast.error("Set an application fee above zero before enforcing payment.");
+      return;
+    }
+    setValue("enforceAdmissionPayment", enabled);
+  }
+
   async function save(event) {
     event.preventDefault();
     setSaving(true);
@@ -54,7 +64,8 @@ export default function AdmissionPayment() {
       await http.put("/admissions", {
         admissionFormFee: Number(form.admissionFormFee) || 0,
         admissionPaymentCurrency: form.admissionPaymentCurrency,
-        admissionPaymentProvider: form.admissionPaymentProvider
+        admissionPaymentProvider: form.admissionPaymentProvider,
+        enforceAdmissionPayment: Boolean(form.enforceAdmissionPayment)
       });
       toast.success("Payment settings saved");
     } catch (error) {
@@ -64,16 +75,46 @@ export default function AdmissionPayment() {
     }
   }
 
+  const feeAmount = Number(form.admissionFormFee) || 0;
+  const enforcementEnabled = Boolean(form.enforceAdmissionPayment);
+  const paymentRequired = enforcementEnabled && feeAmount > 0;
+  const statusLabel = paymentRequired ? "Payment required" : enforcementEnabled ? "Fee needed" : "Payment not enforced";
+  const statusClass = paymentRequired ? "font-bold text-emerald-700" : enforcementEnabled ? "font-bold text-amber-700" : "font-bold text-slate-700";
+
   return (
     <div>
       <h1 className="text-3xl font-black text-slate-950">Admission Payment</h1>
-      <p className="mt-2 text-sm text-slate-600">Set the admission form fee. When the fee is above zero, applicants must pay before the form opens.</p>
+      <p className="mt-2 text-sm text-slate-600">Set the admission form fee and choose whether applicants must pay before the form opens.</p>
 
       <form className="card mt-7 max-w-3xl p-6" onSubmit={save}>
         {loading ? (
           <p className="text-sm text-slate-500">Loading...</p>
         ) : (
           <div className="grid gap-6">
+            <div className="rounded-md border border-slate-200 bg-slate-50 p-4 sm:flex sm:items-center sm:justify-between sm:gap-4">
+              <div>
+                <h2 className="text-lg font-black text-slate-950">Require payment before form access</h2>
+                <p className="mt-1 text-sm text-slate-600">
+                  Current status:{" "}
+                  <span className={statusClass}>
+                    {statusLabel}
+                  </span>
+                </p>
+              </div>
+              <button
+                aria-pressed={enforcementEnabled}
+                className={enforcementEnabled
+                  ? "btn-secondary mt-4 w-full border-slate-300 text-slate-700 hover:bg-slate-100 sm:mt-0 sm:w-fit"
+                  : "btn mt-4 w-full bg-indigo-950 text-white hover:bg-indigo-900 focus:ring-indigo-950 sm:mt-0 sm:w-fit"}
+                disabled={saving}
+                onClick={() => setPaymentEnforcement(!enforcementEnabled)}
+                type="button"
+              >
+                {enforcementEnabled ? <UnlockKeyhole size={18} /> : <LockKeyhole size={18} />}
+                {enforcementEnabled ? "Disable enforcement" : "Enforce payment"}
+              </button>
+            </div>
+
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className="label">Application fee amount</span>
@@ -109,8 +150,10 @@ export default function AdmissionPayment() {
                 {formatCurrency(form.admissionFormFee, form.admissionPaymentCurrency)}
               </p>
               <p className="mt-2 text-sm text-slate-600">
-                {Number(form.admissionFormFee) > 0
+                {paymentRequired
                   ? "Applicants must complete this payment before they can access the form."
+                  : feeAmount > 0
+                  ? "Applicants can access the form without payment until enforcement is enabled."
                   : "No payment is required while the fee is set to zero."}
               </p>
             </div>

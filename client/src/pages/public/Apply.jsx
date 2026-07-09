@@ -234,7 +234,7 @@ export default function Apply() {
   const admissionFormFee = Number(admissions?.admissionFormFee) || 0;
   const admissionPaymentCurrency = admissions?.admissionPaymentCurrency || "NGN";
   const admissionFormFeeKobo = Math.round(admissionFormFee * 100);
-  const paymentRequired = admissionFormFeeKobo > 0;
+  const paymentRequired = Boolean(admissions?.enforceAdmissionPayment) && admissionFormFeeKobo > 0;
   const paymentSatisfied = !paymentRequired || (
     payment?.status === "success" &&
     Number(payment.amountKobo || 0) >= admissionFormFeeKobo &&
