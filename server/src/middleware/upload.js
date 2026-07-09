@@ -9,6 +9,7 @@ const { cloudinary, configured } = require("../config/cloudinary");
 // videos need more headroom.
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
+const MAX_DOCUMENT_BYTES = 8 * 1024 * 1024;
 
 const allowedTypes = [
   "image/jpeg",
@@ -20,8 +21,29 @@ const allowedTypes = [
   "video/quicktime"
 ];
 
+const allowedDocumentTypes = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+];
+
 function resourceType(file) {
   return file.mimetype.startsWith("video/") ? "video" : "image";
+}
+
+function storedResourceType(mimetype) {
+  if (mimetype.startsWith("video/")) return "video";
+  if (mimetype.startsWith("image/")) return "image";
+  return "raw";
+}
+
+function documentResourceType(file) {
+  return file.mimetype.startsWith("image/") ? "image" : "raw";
 }
 
 const upload = multer({
@@ -33,14 +55,30 @@ const upload = multer({
   }
 });
 
+const admissionDocumentUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_DOCUMENT_BYTES, files: 6 },
+  fileFilter(req, file, cb) {
+    if (!allowedDocumentTypes.includes(file.mimetype)) {
+      return cb(new Error("Only PDF, Word, JPG, PNG, WebP, HEIC, and HEIF documents are allowed"));
+    }
+    cb(null, true);
+  }
+});
+
 const extensionByMime = {
   "image/jpeg": ".jpg",
   "image/png": ".png",
   "image/webp": ".webp",
   "image/gif": ".gif",
+  "image/heic": ".heic",
+  "image/heif": ".heif",
   "video/mp4": ".mp4",
   "video/webm": ".webm",
-  "video/quicktime": ".mov"
+  "video/quicktime": ".mov",
+  "application/pdf": ".pdf",
+  "application/msword": ".doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": ".docx"
 };
 
 // Enforce the per-type size limit (multer only supports one global limit).
@@ -78,7 +116,7 @@ async function saveLocalUpload(buffer, ext, mimetype, baseUrl) {
   const filename = `${crypto.randomUUID()}${ext || ".jpg"}`;
   await fs.mkdir(uploadsDir, { recursive: true });
   await fs.writeFile(path.join(uploadsDir, filename), buffer);
-  return { url: `${baseUrl}/uploads/${filename}`, publicId: filename, resourceType: mimetype.startsWith("video/") ? "video" : "image" };
+  return { url: `${baseUrl}/uploads/${filename}`, publicId: filename, resourceType: storedResourceType(mimetype) };
 }
 
 async function uploadToCloudinary(file, folder = "school-website", baseUrl = "") {
@@ -104,4 +142,31 @@ async function uploadToCloudinary(file, folder = "school-website", baseUrl = "")
   });
 }
 
-module.exports = { upload, uploadToCloudinary };
+async function uploadAdmissionDocument(file, folder = "admission-documents", baseUrl = "") {
+  if (file.size > MAX_DOCUMENT_BYTES) {
+    const error = new Error(`Document exceeds the ${Math.round(MAX_DOCUMENT_BYTES / (1024 * 1024))}MB limit`);
+    error.statusCode = 413;
+    throw error;
+  }
+
+  const ext = extensionByMime[file.mimetype] || path.extname(file.originalname);
+  if (!configured) {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Cloudinary must be configured for production uploads");
+    }
+    return saveLocalUpload(file.buffer, ext, file.mimetype, baseUrl);
+  }
+
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder, resource_type: documentResourceType(file) },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve({ url: result.secure_url, publicId: result.public_id, resourceType: result.resource_type });
+      }
+    );
+    stream.end(file.buffer);
+  });
+}
+
+module.exports = { upload, admissionDocumentUpload, uploadToCloudinary, uploadAdmissionDocument };

@@ -159,6 +159,10 @@ const admissionSchema = z.object({
       description: z.string().max(500).optional()
     })).optional(),
     ctaText: z.string().max(200).optional(),
+    admissionFormFee: optionalNumberField,
+    admissionPaymentCurrency: z.enum(["NGN"]).optional(),
+    admissionPaymentProvider: z.enum(["paystack"]).optional(),
+    enforceAdmissionPayment: z.boolean().optional(),
     seoTitle: z.string().max(60).optional(),
     seoDescription: z.string().max(160).optional()
   })

@@ -102,7 +102,11 @@ export const defaultAdmissions = {
     { title: "Registration", description: "Submit required documents and complete the registration process." },
     { title: "Welcome", description: "New families receive orientation details and settling-in support." }
   ],
-  ctaText: "Speak with admissions"
+  ctaText: "Speak with admissions",
+  admissionFormFee: 0,
+  admissionPaymentCurrency: "NGN",
+  admissionPaymentProvider: "paystack",
+  enforceAdmissionPayment: false
 };
 
 export const defaultPages = {
