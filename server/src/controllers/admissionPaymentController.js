@@ -5,6 +5,7 @@ const AdmissionPayment = require("../models/AdmissionPayment");
 const asyncHandler = require("../middleware/asyncHandler");
 
 const PAYSTACK_BASE_URL = "https://api.paystack.co";
+const PUBLIC_PAYMENT_ERROR_MESSAGE = "Payment is temporarily unavailable. Please contact the school office for assistance.";
 
 const initializeSchema = z.object({
   fullName: z.string().trim().min(2).max(120),
@@ -52,6 +53,12 @@ function ensurePaystackSecret() {
     throw error;
   }
   return secret;
+}
+
+function publicPaymentError() {
+  const error = new Error(PUBLIC_PAYMENT_ERROR_MESSAGE);
+  error.statusCode = 503;
+  return error;
 }
 
 async function paystackRequest(path, options = {}) {
@@ -137,7 +144,7 @@ exports.initializePayment = asyncHandler(async (req, res) => {
     payment.gatewayResponse = error.message;
     payment.rawResponse = error.paystack;
     await payment.save();
-    throw error;
+    throw publicPaymentError();
   }
 });
 
@@ -146,7 +153,13 @@ exports.verifyPayment = asyncHandler(async (req, res) => {
   const payment = await AdmissionPayment.findOne({ reference });
   if (!payment) return res.status(404).json({ message: "Payment reference not found" });
 
-  const result = await paystackRequest(`/transaction/verify/${encodeURIComponent(reference)}`, { method: "GET" });
+  let result;
+  try {
+    result = await paystackRequest(`/transaction/verify/${encodeURIComponent(reference)}`, { method: "GET" });
+  } catch (error) {
+    throw publicPaymentError();
+  }
+
   const transaction = result.data || {};
   const isSuccessful = result.status === true && transaction.status === "success";
   const paidAmountKobo = Number(transaction.amount) || 0;

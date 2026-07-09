@@ -12,6 +12,8 @@ const required = (label) => ({ required: `${label} is required.` });
 const toList = (value) => Array.isArray(value) ? value : value ? [value] : [];
 const hasSelection = (value) => toList(value).length > 0 || "Select at least one option.";
 const paymentStorageKey = "rehoboth-admission-payment";
+const genericPaymentError = "Payment is temporarily unavailable. Please contact the school office for assistance.";
+const sensitivePaymentErrorPattern = /paystack|secret|authorization|bearer|environment/i;
 
 function formatCurrency(value, currency = "NGN") {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency, maximumFractionDigits: 0 }).format(Number(value) || 0);
@@ -33,6 +35,12 @@ function storePayment(payment) {
     return;
   }
   window.localStorage.setItem(paymentStorageKey, JSON.stringify(payment));
+}
+
+function customerPaymentError(error, fallback = genericPaymentError) {
+  const message = error?.response?.data?.message || error?.message;
+  if (!message || sensitivePaymentErrorPattern.test(message)) return fallback;
+  return message;
 }
 
 function FieldError({ errors, name }) {
@@ -210,7 +218,10 @@ export default function Apply() {
       })
       .catch((error) => {
         if (!active) return;
-        const message = error?.response?.data?.message || "Unable to verify payment. Please try again.";
+        const message = customerPaymentError(
+          error,
+          "Unable to verify payment right now. Please contact the school office if you have been debited."
+        );
         setPaymentError(message);
         toast.error(message);
       })
@@ -262,7 +273,7 @@ export default function Apply() {
       if (!res.data?.authorizationUrl) throw new Error("Paystack did not return a payment link.");
       window.location.assign(res.data.authorizationUrl);
     } catch (error) {
-      const message = error?.response?.data?.message || error.message || "Unable to start payment. Please try again.";
+      const message = customerPaymentError(error);
       setPaymentError(message);
       toast.error(message);
     } finally {
