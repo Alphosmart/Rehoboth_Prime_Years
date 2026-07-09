@@ -63,6 +63,11 @@ function collectMediaUrls(value, urls = new Set()) {
   if (typeof value === "object") {
     for (const [key, entry] of Object.entries(value)) {
       if (MEDIA_FIELDS.includes(key) && isString(entry)) urls.add(entry);
+      else if (key === "admissionDocuments" && Array.isArray(entry)) {
+        entry.forEach((document) => {
+          if (isString(document?.url)) urls.add(document.url);
+        });
+      }
       else if (entry && typeof entry === "object") collectMediaUrls(entry, urls);
     }
   }

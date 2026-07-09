@@ -6,8 +6,7 @@ import http from "../../api/http";
 const initialForm = {
   admissionFormFee: 0,
   admissionPaymentCurrency: "NGN",
-  admissionPaymentProvider: "paystack",
-  enforceAdmissionPayment: false
+  admissionPaymentProvider: "paystack"
 };
 
 function formatCurrency(amount, currency) {
@@ -32,8 +31,7 @@ export default function AdmissionPayment() {
           ...initialForm,
           admissionFormFee: res.data?.admissionFormFee ?? 0,
           admissionPaymentCurrency: res.data?.admissionPaymentCurrency || "NGN",
-          admissionPaymentProvider: res.data?.admissionPaymentProvider || "paystack",
-          enforceAdmissionPayment: Boolean(res.data?.enforceAdmissionPayment)
+          admissionPaymentProvider: res.data?.admissionPaymentProvider || "paystack"
         });
       })
       .catch((error) => toast.error(error?.response?.data?.message || "Unable to load payment settings."))
@@ -56,8 +54,7 @@ export default function AdmissionPayment() {
       await http.put("/admissions", {
         admissionFormFee: Number(form.admissionFormFee) || 0,
         admissionPaymentCurrency: form.admissionPaymentCurrency,
-        admissionPaymentProvider: form.admissionPaymentProvider,
-        enforceAdmissionPayment: Boolean(form.enforceAdmissionPayment)
+        admissionPaymentProvider: form.admissionPaymentProvider
       });
       toast.success("Payment settings saved");
     } catch (error) {
@@ -70,34 +67,13 @@ export default function AdmissionPayment() {
   return (
     <div>
       <h1 className="text-3xl font-black text-slate-950">Admission Payment</h1>
-      <p className="mt-2 text-sm text-slate-600">Control whether applicants must pay before the admission form opens.</p>
+      <p className="mt-2 text-sm text-slate-600">Set the admission form fee. When the fee is above zero, applicants must pay before the form opens.</p>
 
       <form className="card mt-7 max-w-3xl p-6" onSubmit={save}>
         {loading ? (
           <p className="text-sm text-slate-500">Loading...</p>
         ) : (
           <div className="grid gap-6">
-            <label className="flex flex-wrap items-center justify-between gap-4 rounded-md border border-[#dbe8bf] bg-[#f8fbef] p-4">
-              <span>
-                <span className="block text-lg font-bold text-slate-950">Require payment before form access</span>
-                <span className="mt-1 block text-sm text-slate-600">
-                  Current status:{" "}
-                  <span className={form.enforceAdmissionPayment ? "font-bold text-emerald-700" : "font-bold text-slate-700"}>
-                    {form.enforceAdmissionPayment ? "Payment required" : "Payment optional"}
-                  </span>
-                </span>
-              </span>
-              <span className="inline-flex items-center gap-3 text-sm font-semibold text-slate-700">
-                <input
-                  className="h-5 w-5 rounded border-slate-300 text-brand focus:ring-brand"
-                  type="checkbox"
-                  checked={form.enforceAdmissionPayment}
-                  onChange={(event) => setValue("enforceAdmissionPayment", event.target.checked)}
-                />
-                Enforce payment
-              </span>
-            </label>
-
             <div className="grid gap-4 sm:grid-cols-2">
               <label>
                 <span className="label">Application fee amount</span>
@@ -132,7 +108,11 @@ export default function AdmissionPayment() {
               <p className="mt-3 text-3xl font-black text-slate-950">
                 {formatCurrency(form.admissionFormFee, form.admissionPaymentCurrency)}
               </p>
-              <p className="mt-2 text-sm text-slate-600">Paystack receives the amount in kobo automatically.</p>
+              <p className="mt-2 text-sm text-slate-600">
+                {Number(form.admissionFormFee) > 0
+                  ? "Applicants must complete this payment before they can access the form."
+                  : "No payment is required while the fee is set to zero."}
+              </p>
             </div>
 
             <button className="btn bg-indigo-950 text-white hover:bg-indigo-900 focus:ring-indigo-950 sm:w-fit" disabled={saving} type="submit">

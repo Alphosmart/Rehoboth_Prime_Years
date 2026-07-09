@@ -22,7 +22,7 @@ function requiredAmountKobo(config) {
 }
 
 function paymentIsRequired(config) {
-  return Boolean(config.enforceAdmissionPayment) && requiredAmountKobo(config) > 0;
+  return requiredAmountKobo(config) > 0;
 }
 
 function paymentCurrency(config) {

@@ -4,13 +4,19 @@ const AdmissionApplication = require("../models/AdmissionApplication");
 const AdmissionContent = require("../models/AdmissionContent");
 const AdmissionPayment = require("../models/AdmissionPayment");
 const asyncHandler = require("../middleware/asyncHandler");
+const { uploadAdmissionDocument } = require("../middleware/upload");
 const { sendEmail } = require("../utils/email");
+const { deleteMediaByUrl } = require("../utils/media");
 
 const requiredString = (label, max) => z.string().trim().min(1, `${label} is required.`).max(max);
 const optionalString = (max) => z.string().trim().max(max).optional().default("");
 const emptyToUndefined = (value) => (value === "" || value === null ? undefined : value);
 const optionalNumber = (max) => z.preprocess(emptyToUndefined, z.coerce.number().int().min(1).max(max).optional());
 const validDate = (label) => requiredString(label, 20).refine((value) => !Number.isNaN(Date.parse(value)), `${label} must be a valid date.`);
+const requiredCheckbox = (message) => z.preprocess(
+  (value) => value === true || value === "true" || value === "on" || value === "1",
+  z.boolean().refine(Boolean, message)
+);
 
 const communicationPreferenceSchema = z.preprocess(
   (value) => (Array.isArray(value) ? value : value ? [value] : []),
@@ -55,7 +61,7 @@ const applicationSchema = z.object({
   pickupTwoAddress: optionalString(250),
   attestationName: requiredString("Parent / guardian name", 120),
   attestationDate: validDate("Attestation date"),
-  attestationAgreement: z.boolean().refine(Boolean, "Confirm the attestation to submit."),
+  attestationAgreement: requiredCheckbox("Confirm the attestation to submit."),
   paymentReference: optionalString(120)
 }).refine(
   (data) => data.hasMedicalCondition !== "Yes" || Boolean(data.medicalDetails.trim()),
@@ -64,6 +70,14 @@ const applicationSchema = z.object({
   (data) => Boolean(data.fatherName.trim() || data.motherName.trim()),
   { message: "Enter at least one parent name.", path: ["fatherName"] }
 );
+
+const documentFieldLabels = {
+  birthCertificate: "Birth certificate",
+  passportPhotographs: "Passport photographs",
+  immunizationRecord: "Immunization record",
+  previousSchoolReport: "Last result / transfer certificate",
+  additionalDocument: "Additional document"
+};
 
 function optionalText(value) {
   if (Array.isArray(value)) return value.length ? value.join(", ") : "N/A";
@@ -75,7 +89,7 @@ function requiredAmountKobo(config) {
 }
 
 function admissionPaymentIsRequired(config) {
-  return Boolean(config?.enforceAdmissionPayment) && requiredAmountKobo(config) > 0;
+  return requiredAmountKobo(config) > 0;
 }
 
 function generateApplicationNumber() {
@@ -92,6 +106,14 @@ function paymentRequiredError(message) {
   const error = new Error(message);
   error.statusCode = 402;
   throw error;
+}
+
+function documentUploadError(error) {
+  const publicError = new Error(error.statusCode === 413
+    ? error.message
+    : "Unable to upload admission documents. Please try again or contact the school office.");
+  publicError.statusCode = error.statusCode === 413 ? 413 : 503;
+  return publicError;
 }
 
 async function reservePayment(reference) {
@@ -168,6 +190,11 @@ function buildApplicationEmail(data) {
     `Amount: ${data.paymentAmountKobo ? `NGN ${(data.paymentAmountKobo / 100).toLocaleString()}` : "N/A"}`,
     `Paid at: ${data.paymentPaidAt ? new Date(data.paymentPaidAt).toLocaleString() : "N/A"}`,
     "",
+    "DOCUMENTS",
+    ...(data.admissionDocuments?.length
+      ? data.admissionDocuments.map((document) => `${document.label}: ${document.originalName || "Uploaded document"} - ${document.url}`)
+      : ["Uploaded documents: N/A"]),
+    "",
     "ATTESTATION",
     `Parent/guardian name: ${data.attestationName}`,
     `Date: ${data.attestationDate}`,
@@ -175,24 +202,72 @@ function buildApplicationEmail(data) {
   ].join("\n");
 }
 
+function admissionDocumentFiles(files = {}) {
+  return Object.entries(documentFieldLabels).flatMap(([field, label]) => (
+    (files[field] || []).map((file) => ({ field, label, file }))
+  ));
+}
+
+async function uploadApplicationDocuments(files, applicationNumber, req) {
+  const baseUrl = process.env.PUBLIC_API_URL || `${req.protocol}://${req.get("host")}`;
+  const uploadedDocuments = [];
+
+  try {
+    for (const { field, label, file } of admissionDocumentFiles(files)) {
+      const result = await uploadAdmissionDocument(file, `admission-documents/${applicationNumber}`, baseUrl);
+      uploadedDocuments.push({
+        label,
+        field,
+        originalName: file.originalname,
+        mimetype: file.mimetype,
+        size: file.size,
+        url: result.url,
+        publicId: result.publicId,
+        resourceType: result.resourceType
+      });
+    }
+  } catch (error) {
+    error.uploadedDocuments = uploadedDocuments;
+    error.isDocumentUploadError = true;
+    throw error;
+  }
+
+  return uploadedDocuments;
+}
+
+async function cleanupUploadedDocuments(documents = []) {
+  await Promise.all(documents.map((document) => deleteMediaByUrl(document.url)));
+}
+
 exports.createApplication = asyncHandler(async (req, res) => {
   const data = applicationSchema.parse(req.body);
+  const applicationNumber = generateApplicationNumber();
   const payment = await reservePayment(data.paymentReference);
-  const applicationPayload = payment ? {
-    ...data,
-    applicationNumber: generateApplicationNumber(),
-    paymentReference: payment.reference,
-    payment: payment._id,
-    paymentAmountKobo: payment.amountKobo,
-    paymentCurrency: payment.currency,
-    paymentPaidAt: payment.paidAt
-  } : { ...data, applicationNumber: generateApplicationNumber() };
 
+  let admissionDocuments = [];
   let application;
+  let applicationPayload;
   try {
+    admissionDocuments = await uploadApplicationDocuments(req.files, applicationNumber, req);
+    applicationPayload = payment ? {
+      ...data,
+      applicationNumber,
+      admissionDocuments,
+      paymentReference: payment.reference,
+      payment: payment._id,
+      paymentAmountKobo: payment.amountKobo,
+      paymentCurrency: payment.currency,
+      paymentPaidAt: payment.paidAt
+    } : { ...data, applicationNumber, admissionDocuments };
+
     application = await AdmissionApplication.create(applicationPayload);
   } catch (error) {
     if (payment) await AdmissionPayment.findByIdAndUpdate(payment._id, { $unset: { usedAt: "" } });
+    await cleanupUploadedDocuments(admissionDocuments.length ? admissionDocuments : error.uploadedDocuments);
+    if (error.isDocumentUploadError) {
+      console.error("Admission document upload failed:", error.message);
+      throw documentUploadError(error);
+    }
     throw error;
   }
 
@@ -225,5 +300,6 @@ exports.markRead = asyncHandler(async (req, res) => {
 exports.deleteApplication = asyncHandler(async (req, res) => {
   const application = await AdmissionApplication.findByIdAndDelete(req.params.id);
   if (!application) return res.status(404).json({ message: "Application not found" });
+  await cleanupUploadedDocuments(application.admissionDocuments);
   res.json({ message: "Deleted successfully" });
 });

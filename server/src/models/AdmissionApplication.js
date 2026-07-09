@@ -46,6 +46,17 @@ const admissionApplicationSchema = new mongoose.Schema(
     paymentAmountKobo: Number,
     paymentCurrency: String,
     paymentPaidAt: Date,
+    admissionDocuments: [{
+      label: String,
+      field: String,
+      originalName: String,
+      mimetype: String,
+      size: Number,
+      url: String,
+      publicId: String,
+      resourceType: String,
+      uploadedAt: { type: Date, default: Date.now }
+    }],
     isRead: { type: Boolean, default: false }
   },
   { timestamps: true }

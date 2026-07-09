@@ -1,6 +1,6 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Download, Eye, Trash2 } from "lucide-react";
+import { Download, Eye, FileText, Trash2 } from "lucide-react";
 import http from "../../api/http";
 import { useApi } from "../../hooks/useApi";
 import ConfirmDeleteModal from "../../components/admin/ConfirmDeleteModal";
@@ -91,6 +91,10 @@ function formatKobo(value) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 0 }).format(Number(value) / 100);
 }
 
+function uploadedDocuments(application) {
+  return Array.isArray(application.admissionDocuments) ? application.admissionDocuments.filter((document) => document?.url) : [];
+}
+
 function applicationNumber(application) {
   if (application.applicationNumber) return application.applicationNumber;
   const date = application.createdAt ? new Date(application.createdAt) : new Date();
@@ -119,6 +123,7 @@ function slugify(value) {
 const actionButtonClass = "inline-flex items-center justify-center gap-2 rounded-md border border-indigo-200 bg-white px-3 py-2 text-sm font-semibold text-indigo-950 transition hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-200";
 
 function buildPrintableApplication(application) {
+  const documents = uploadedDocuments(application);
   const sectionMarkup = sections.map((section) => `
     <section>
       <h2>${escapeHtml(section.title)}</h2>
@@ -134,6 +139,23 @@ function buildPrintableApplication(application) {
       </table>
     </section>
   `).join("");
+  const documentMarkup = `
+    <section>
+      <h2>Documents</h2>
+      ${documents.length ? `
+        <table>
+          <tbody>
+            ${documents.map((document) => `
+              <tr>
+                <th>${escapeHtml(document.label || "Document")}</th>
+                <td><a href="${escapeHtml(document.url)}" target="_blank" rel="noreferrer">${escapeHtml(document.originalName || document.url)}</a></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      ` : "<p>No documents uploaded.</p>"}
+    </section>
+  `;
 
   return `<!doctype html>
 <html>
@@ -165,6 +187,7 @@ function buildPrintableApplication(application) {
     <p>Submitted: ${escapeHtml(formatDateTime(application.createdAt))}</p>
   </header>
   ${sectionMarkup}
+  ${documentMarkup}
   <section>
     <h2>Attestation Statement</h2>
     <p class="attestation">
@@ -234,6 +257,7 @@ export default function Applications() {
                 <th className="p-3">Application No.</th>
                 <th className="p-3">Class</th>
                 <th className="p-3">Payment</th>
+                <th className="p-3">Documents</th>
                 <th className="p-3">Contact</th>
                 <th className="p-3">Submitted</th>
                 <th className="p-3">Actions</th>
@@ -248,6 +272,28 @@ export default function Applications() {
                   <td className="p-3">
                     <span className="block font-medium">{application.paymentAmountKobo ? formatKobo(application.paymentAmountKobo) : "-"}</span>
                     <span className="mt-1 block text-xs text-slate-400">{application.paymentReference || "No payment"}</span>
+                  </td>
+                  <td className="p-3">
+                    {uploadedDocuments(application).length ? (
+                      <div className="grid gap-1">
+                        {uploadedDocuments(application).slice(0, 3).map((document) => (
+                          <a
+                            className="inline-flex items-center gap-1 text-xs font-semibold text-indigo-700 hover:text-brand"
+                            href={document.url}
+                            key={`${document.field}-${document.url}`}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            <FileText size={14} /> {document.label || "Document"}
+                          </a>
+                        ))}
+                        {uploadedDocuments(application).length > 3 ? (
+                          <span className="text-xs text-slate-400">+{uploadedDocuments(application).length - 3} more</span>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <span className="text-slate-400">-</span>
+                    )}
                   </td>
                   <td className="p-3 text-slate-500">
                     {application.parentEmail ? <a className="block hover:text-brand" href={`mailto:${application.parentEmail}`}>{application.parentEmail}</a> : <span className="block">No email</span>}

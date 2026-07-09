@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { Link, useSearchParams } from "react-router-dom";
-import { ArrowLeft, CheckCircle2, CreditCard, HeartPulse, MessageSquare, Send, ShieldCheck, UserRound, UsersRound } from "lucide-react";
+import { ArrowLeft, CheckCircle2, CreditCard, FileText, HeartPulse, MessageSquare, Send, ShieldCheck, UserRound, UsersRound } from "lucide-react";
 import http from "../../api/http";
 import SectionTitle from "../../components/public/SectionTitle";
 import { defaultAdmissions } from "../../data/defaultContent";
@@ -14,6 +14,27 @@ const hasSelection = (value) => toList(value).length > 0 || "Select at least one
 const paymentStorageKey = "rehoboth-admission-payment";
 const genericPaymentError = "Payment is temporarily unavailable. Please contact the school office for assistance.";
 const sensitivePaymentErrorPattern = /paystack|secret|authorization|bearer|environment/i;
+const maxDocumentFileSize = 8 * 1024 * 1024;
+const documentAccept = "application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/webp,image/heic,image/heif";
+const allowedDocumentTypes = new Set([
+  "application/pdf",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif"
+]);
+const allowedDocumentExtension = /\.(pdf|doc|docx|jpe?g|png|webp|heic|heif)$/i;
+const documentUploadFields = [
+  { name: "birthCertificate", label: "Birth certificate" },
+  { name: "passportPhotographs", label: "Passport photographs", multiple: true, maxFiles: 2 },
+  { name: "immunizationRecord", label: "Immunization record" },
+  { name: "previousSchoolReport", label: "Last result / transfer certificate" },
+  { name: "additionalDocument", label: "Additional document" }
+];
+const documentUploadFieldNames = new Set(documentUploadFields.map((field) => field.name));
 
 function formatCurrency(value, currency = "NGN") {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency, maximumFractionDigits: 0 }).format(Number(value) || 0);
@@ -41,6 +62,34 @@ function customerPaymentError(error, fallback = genericPaymentError) {
   const message = error?.response?.data?.message || error?.message;
   if (!message || sensitivePaymentErrorPattern.test(message)) return fallback;
   return message;
+}
+
+function formatFileSize(bytes) {
+  return `${Math.round(bytes / (1024 * 1024))}MB`;
+}
+
+function validateDocumentFiles(value, field) {
+  const files = Array.from(value || []);
+  if (!files.length) return true;
+  if (!field.multiple && files.length > 1) return `Upload one ${field.label.toLowerCase()} file.`;
+  if (field.maxFiles && files.length > field.maxFiles) return `Upload up to ${field.maxFiles} ${field.label.toLowerCase()} files.`;
+
+  for (const file of files) {
+    const allowed = (file.type && allowedDocumentTypes.has(file.type)) || allowedDocumentExtension.test(file.name || "");
+    if (!allowed) return "Upload a PDF, Word document, JPG, PNG, WebP, HEIC, or HEIF file.";
+    if (file.size > maxDocumentFileSize) return `Each document must be ${formatFileSize(maxDocumentFileSize)} or less.`;
+  }
+
+  return true;
+}
+
+function appendFormValue(formData, key, value) {
+  if (value === undefined || value === null || value === "") return;
+  if (Array.isArray(value)) {
+    value.forEach((entry) => appendFormValue(formData, key, entry));
+    return;
+  }
+  formData.append(key, typeof value === "boolean" ? String(value) : value);
 }
 
 function FieldError({ errors, name }) {
@@ -92,6 +141,23 @@ function SelectField({ errors, label, name, options, register, rules }) {
         {options.map((option) => <option key={option} value={option}>{option}</option>)}
       </select>
       <FieldError errors={errors} name={name} />
+    </div>
+  );
+}
+
+function FileField({ errors, field, register }) {
+  return (
+    <div>
+      <label className="label" htmlFor={field.name}>{field.label}</label>
+      <input
+        id={field.name}
+        className="input"
+        type="file"
+        accept={documentAccept}
+        multiple={field.multiple}
+        {...register(field.name, { validate: (value) => validateDocumentFiles(value, field) })}
+      />
+      <FieldError errors={errors} name={field.name} />
     </div>
   );
 }
@@ -168,7 +234,7 @@ export default function Apply() {
   const admissionFormFee = Number(admissions?.admissionFormFee) || 0;
   const admissionPaymentCurrency = admissions?.admissionPaymentCurrency || "NGN";
   const admissionFormFeeKobo = Math.round(admissionFormFee * 100);
-  const paymentRequired = Boolean(admissions?.enforceAdmissionPayment) && admissionFormFeeKobo > 0;
+  const paymentRequired = admissionFormFeeKobo > 0;
   const paymentSatisfied = !paymentRequired || (
     payment?.status === "success" &&
     Number(payment.amountKobo || 0) >= admissionFormFeeKobo &&
@@ -287,11 +353,21 @@ export default function Apply() {
       return;
     }
 
-    try {
-      await http.post("/admission-applications", {
-        ...values,
-        paymentReference: paymentRequired ? payment.reference : ""
+    const formData = new FormData();
+    Object.entries({
+      ...values,
+      paymentReference: paymentRequired ? payment.reference : ""
+    }).forEach(([key, value]) => {
+      if (!documentUploadFieldNames.has(key)) appendFormValue(formData, key, value);
+    });
+    documentUploadFields.forEach((field) => {
+      Array.from(values[field.name] || []).forEach((file) => {
+        if (file?.size) formData.append(field.name, file);
       });
+    });
+
+    try {
+      await http.post("/admission-applications", formData, { headers: { "Content-Type": "multipart/form-data" } });
       toast.success("Application submitted. Our admissions team will be in touch.");
       reset();
       if (paymentRequired) {
@@ -466,6 +542,18 @@ export default function Apply() {
           </div>
         </FormSection>
 
+        <FormSection icon={FileText} title="Documents">
+          <p className="text-sm leading-6 text-slate-700">
+            Upload clear copies of the documents that are ready now. The admissions team can follow up on anything that still needs to be submitted.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {documentUploadFields.map((field) => (
+              <FileField key={field.name} errors={errors} field={field} register={register} />
+            ))}
+          </div>
+          <p className="text-xs font-medium text-slate-500">Accepted: PDF, Word, JPG, PNG, WebP, HEIC, or HEIF. Maximum {formatFileSize(maxDocumentFileSize)} each.</p>
+        </FormSection>
+
         <FormSection icon={ShieldCheck} title="Attestation">
           <p className="text-sm leading-6 text-slate-700">
             I hereby acknowledge and confirm my desire to enroll my child in Rehoboth Prime Years. I understand and agree to the Christian values and educational standards upheld by the school, and I commit to supporting my child in adhering to the school's policies and educational journey.
@@ -480,11 +568,6 @@ export default function Apply() {
           </label>
           <FieldError errors={errors} name="attestationAgreement" />
         </FormSection>
-
-        <div className="rounded-lg border border-[#dbe8bf] bg-white p-5 text-sm text-slate-700">
-          <h2 className="font-bold text-slate-950">Documents to submit</h2>
-          <p className="mt-2">Please submit two passport photographs, a copy of the birth certificate, a copy of the immunization record, and where applicable the last result or transfer certificate from the previous school.</p>
-        </div>
 
         <button className="btn-primary w-full sm:w-fit" disabled={isSubmitting} type="submit">
           <Send size={18} />
