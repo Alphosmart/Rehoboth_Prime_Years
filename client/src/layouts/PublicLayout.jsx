@@ -81,12 +81,6 @@ export default function PublicLayout() {
   return (
     <div className="min-h-screen bg-[#FAFBF8]">
       <header className="sticky top-0 z-40 border-b border-schoolLime/35 bg-white/95 backdrop-blur">
-        <div className="hidden bg-[#24391d] py-2 text-sm text-white lg:block">
-          <div className="container-pad flex items-center justify-between gap-6">
-            <p className="font-medium text-accent">{settings?.motto || "Growing in wisdom and favour with God and Man"}</p>
-            <p className="truncate text-white/85">{settings?.phone}</p>
-          </div>
-        </div>
         <div className="container-pad flex h-20 items-center justify-between">
           <Link to="/" className="flex min-w-0 items-center gap-3">
             <img
@@ -99,7 +93,10 @@ export default function PublicLayout() {
                 event.currentTarget.src = fallbackLogo;
               }}
             />
-            <span className="max-w-[210px] text-lg font-black leading-tight text-slate-950">{settings?.schoolName || "School"}</span>
+            <span className="grid max-w-[190px] leading-tight sm:max-w-[260px] lg:max-w-[300px]">
+              <span className="text-base font-black text-slate-950 sm:text-lg">{settings?.schoolName || "School"}</span>
+              <span className="mt-0.5 text-[10px] font-bold uppercase tracking-wide text-brand sm:text-[11px]">{settings?.motto || "Growing in wisdom and favour with God and Man"}</span>
+            </span>
           </Link>
           <nav className="hidden items-center gap-1 lg:flex">
             <a className="rounded-full bg-brand px-3 py-2 text-sm font-semibold text-white hover:bg-[#006b31]" href={portalUrl} target="_blank" rel="noreferrer">Check Result</a>

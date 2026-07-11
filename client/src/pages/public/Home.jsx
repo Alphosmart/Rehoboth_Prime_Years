@@ -219,9 +219,6 @@ export default function Home() {
         </div>
         <div className="container-pad relative flex min-h-[680px] items-center py-20">
           <div className="max-w-4xl">
-            <p className="mb-4 inline-flex rounded-full border border-white/30 bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-wide text-accent">
-              {settings?.motto || "Growing in wisdom and favour with God and Man"}
-            </p>
             <h1 className="max-w-3xl text-4xl font-black leading-tight md:text-6xl">{slide.title}</h1>
             <p className="mt-5 max-w-2xl text-lg leading-8 text-white/90">{slide.subtitle}</p>
             <div className="mt-8 flex flex-wrap gap-3">
