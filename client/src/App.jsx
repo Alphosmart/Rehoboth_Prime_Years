@@ -35,6 +35,7 @@ import {
   EventManager,
   FAQManager,
   GalleryManager,
+  HeadOfSchoolManager,
   HomepageManager,
   SettingsManager,
   StaffManager,
@@ -75,6 +76,7 @@ export default function App() {
           <Route path="settings" element={<SettingsManager />} />
           <Route path="homepage" element={<HomepageManager />} />
           <Route path="pages" element={<PageManager />} />
+          <Route path="head-of-school" element={<HeadOfSchoolManager />} />
           <Route path="blog" element={<BlogManager />} />
           <Route path="gallery" element={<GalleryManager />} />
           <Route path="events" element={<EventManager />} />
