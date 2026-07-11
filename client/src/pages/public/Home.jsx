@@ -36,6 +36,7 @@ import {
   defaultEvents,
   defaultGallery,
   defaultHomepage,
+  normalizeAcademicPrograms,
   defaultTestimonials
 } from "../../data/defaultContent";
 
@@ -157,6 +158,7 @@ export default function Home() {
   const slide = heroSlides[activeSlide] || heroSlides[0] || {};
   const slideMediaValue = slide.media || slide.image || "https://placehold.co/1600x900";
   const slideMediaType = slide.media ? detectMediaType(slide.media, slide.mediaType) : "image";
+  const academicPrograms = normalizeAcademicPrograms(academics.data || []);
 
   useEffect(() => {
     setActiveSlide(0);
@@ -228,7 +230,7 @@ export default function Home() {
               </Link>
               <Link className="btn border border-white/50 bg-white/10 text-white hover:bg-white/20" to="/academics">Explore learning</Link>
             </div>
-            <div className="mt-10 grid max-w-3xl gap-3 sm:grid-cols-3">
+            <div className="mt-10 hidden max-w-3xl gap-3 lg:grid lg:grid-cols-3">
               {heroStats.map((item) => (
                 <div className="rounded-lg border border-white/20 bg-white/10 p-4 backdrop-blur" key={item.value}>
                   <p className="text-base font-black text-white">{item.value}</p>
@@ -372,9 +374,11 @@ export default function Home() {
       <section className="container-pad py-16">
         <SectionTitle eyebrow="Academics" title="Programmes designed for steady growth" text="Learners move from playful foundations to independent study through a pathway that values mastery, curiosity, and confidence." />
         <div className="grid gap-5 md:grid-cols-3">
-          {academics.data?.slice(0, 3).map((p) => (
+          {academicPrograms.slice(0, 3).map((p) => (
             <div className="card overflow-hidden" key={p._id}>
-              <img src={p.image || "https://placehold.co/800x500"} className="h-44 w-full object-cover" alt="" />
+              <div className="aspect-[4/3] bg-[#f5f8ed]">
+                <img src={p.image || "https://placehold.co/800x500"} className="h-full w-full object-contain" alt="" />
+              </div>
               <div className="p-5">
                 <p className="text-sm font-semibold text-navy">{p.level}</p>
                 <h3 className="mt-1 font-bold">{p.title}</h3>

@@ -8,6 +8,7 @@ const image = (text, bg = "7EA652", fg = "ffffff") => `https://placehold.co/1200
 const apiOrigin = (import.meta.env.VITE_API_BASE_URL || (import.meta.env.PROD ? "/api" : "http://localhost:5000/api")).replace(/\/api\/?$/, "");
 const upload = (filename) => `${apiOrigin}/uploads/${filename}`;
 const logoUrl = logoAsset;
+const seniorSecondaryCurriculum = ["Grade 10 (SS1)"];
 
 const futureDate = (days) => new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
 
@@ -88,8 +89,22 @@ export const defaultAcademics = [
   { _id: "default-academics-early-years", title: "Early Years", level: "Early Years", description: "Playful routines, phonics, number sense, social confidence, and gentle independence for young learners.", image: image("Early Years"), curriculum: ["Playgroup", "Prenursery", "Nursery 1", "Nursery 2"] },
   { _id: "default-academics-primary", title: "Primary School", level: "Primary", description: "Core literacy, numeracy, science, social studies, values, creative work, and confidence-building presentations.", image: image("Primary School"), curriculum: ["Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6"] },
   { _id: "default-academics-junior-secondary", title: "Junior Secondary", level: "Junior Secondary", description: "A broad foundation across core subjects that builds study skills, discipline, and confidence through Grades 7 to 9.", image: image("Junior Secondary"), curriculum: ["Grade 7", "Grade 8", "Grade 9"] },
-  { _id: "default-academics-senior-secondary", title: "Senior Secondary", level: "Senior Secondary", description: "A focused pathway for specialisation, examinations, leadership, and readiness for higher education through Grades 10 to 12.", image: image("Senior Secondary"), curriculum: ["Grade 10", "Grade 11", "Grade 12"] }
+  { _id: "default-academics-senior-secondary", title: "Senior Secondary", level: "Senior Secondary", description: "A focused pathway for specialisation, examinations, leadership, and readiness for higher education through Grade 10 (SS1).", image: image("Senior Secondary"), curriculum: seniorSecondaryCurriculum }
 ];
+
+export function normalizeAcademicPrograms(programs = []) {
+  if (!Array.isArray(programs)) return programs;
+  return programs.map((program) => {
+    const programName = `${program.title || ""} ${program.level || ""}`.toLowerCase();
+    if (!programName.includes("senior secondary")) return program;
+
+    const description = (program.description || "A focused pathway for specialisation, examinations, leadership, and readiness for higher education through Grade 10 (SS1).")
+      .replace(/through Grades 10 to 12/gi, "through Grade 10 (SS1)")
+      .replace(/Grades 10 to 12/gi, "Grade 10 (SS1)");
+
+    return { ...program, description, curriculum: seniorSecondaryCurriculum };
+  });
+}
 
 export const defaultAdmissions = {
   title: "Admissions",
