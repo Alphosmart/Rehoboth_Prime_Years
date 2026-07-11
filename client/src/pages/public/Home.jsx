@@ -147,11 +147,6 @@ export default function Home() {
       ctaLabel: "Start Admissions",
       ctaLink: "/admissions"
     });
-    if (primarySlide.media) {
-      const firstSlide = slides[0];
-      if (firstSlide && firstSlide.title === primarySlide.title && firstSlide.media === primarySlide.media) return slides;
-      return [primarySlide, ...slides];
-    }
     if (slides.length > 0) return slides;
     return [primarySlide];
   }, [data]);
