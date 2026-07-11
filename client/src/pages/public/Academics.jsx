@@ -3,10 +3,11 @@ import { useApi } from "../../hooks/useApi";
 import Loader from "../../components/public/Loader";
 import ErrorMessage from "../../components/public/ErrorMessage";
 import SectionTitle from "../../components/public/SectionTitle";
-import { defaultAcademics } from "../../data/defaultContent";
+import { defaultAcademics, normalizeAcademicPrograms } from "../../data/defaultContent";
 
 export default function Academics() {
-  const { data, loading, error } = useApi(() => http.get("/academics?active=true"), [], { cacheKey: "academics-active", fallbackData: defaultAcademics });
+  const { data: academicPrograms, loading, error } = useApi(() => http.get("/academics?active=true"), [], { cacheKey: "academics-active", fallbackData: defaultAcademics });
+  const data = normalizeAcademicPrograms(academicPrograms);
   if (loading) return <Loader />;
   if (error) return <ErrorMessage message={error} />;
   return <main className="container-pad py-14"><SectionTitle eyebrow="Academics" title="Academic programs" text="A balanced curriculum for confident learners." /><div className="grid gap-5 md:grid-cols-3">{data.map((p) => <article className="card overflow-hidden" key={p._id}><div className="aspect-[4/3] bg-[#f5f8ed]"><img src={p.image || "https://placehold.co/800x500"} alt="" className="h-full w-full object-contain" /></div><div className="p-5"><p className="text-sm font-semibold text-navy">{p.level}</p><h2 className="mt-1 text-xl font-bold">{p.title}</h2><p className="mt-2 text-sm text-slate-600">{p.description}</p>{p.curriculum?.length > 0 && <ul className="mt-4 space-y-1.5 border-t border-slate-200 pt-4">{p.curriculum.map((item) => <li className="flex items-start gap-2 text-sm text-slate-700" key={item}><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />{item}</li>)}</ul>}</div></article>)}</div></main>;
