@@ -131,7 +131,7 @@ export default function Home() {
   const home = useApi(() => http.get("/homepage"), [], { cacheKey: "homepage", fallbackData: defaultHomepage });
   const blogs = useApi(() => http.get("/blogs?status=published"), [], { cacheKey: "blogs-published", fallbackData: defaultBlogs });
   const gallery = useApi(() => http.get("/gallery"), [], { cacheKey: "gallery-categories-v4", fallbackData: localGallery });
-  const events = useApi(() => http.get("/events"), [], { cacheKey: "events", fallbackData: defaultEvents });
+  const events = useApi(() => http.get("/events"), [], { cacheKey: "events-v2", fallbackData: defaultEvents });
   const testimonials = useApi(() => http.get("/testimonials?active=true"), [], { cacheKey: "testimonials-active", fallbackData: defaultTestimonials });
   const academics = useApi(() => http.get("/academics?active=true"), [], { cacheKey: "academics-active", fallbackData: defaultAcademics });
 
@@ -457,7 +457,7 @@ export default function Home() {
       <section className="bg-white py-16">
         <div className="container-pad">
           <SectionTitle eyebrow="Events" title="Upcoming events" />
-          <div className="grid gap-5 md:grid-cols-2">{events.data?.slice(0, 2).map((event) => <EventCard key={event._id} event={event} />)}</div>
+          <div className="grid gap-5 md:grid-cols-2">{events.data?.filter((event) => new Date(event.date) >= new Date()).slice(0, 2).map((event) => <EventCard key={event._id} event={event} />)}</div>
         </div>
       </section>
 

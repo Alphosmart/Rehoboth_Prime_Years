@@ -33,7 +33,7 @@ export function GalleryCard({ item, onOpen }) {
 export function EventCard({ event }) {
   return (
     <article className="card overflow-hidden">
-      <img src={event.image || "https://placehold.co/800x500"} alt="" className="h-44 w-full object-cover" />
+      <img src={optimizeCloudinaryImage(event.image, 800) || "https://placehold.co/800x500"} alt="" className="h-44 w-full object-cover" loading="lazy" decoding="async" />
       <div className="p-5">
         <h3 className="text-xl font-bold text-slate-950">{event.title}</h3>
         <p className="mt-3 flex items-center gap-2 text-sm text-slate-600"><Calendar size={16} /> {new Date(event.date).toLocaleDateString()}</p>
