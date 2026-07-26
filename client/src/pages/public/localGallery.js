@@ -1,7 +1,4 @@
-const categoryImages = import.meta.glob(
-  "./Categories/**/*.{jpg,jpeg,png,webp,avif}",
-  { eager: true, import: "default" }
-);
+import categoryImages from "virtual:category-gallery";
 
 const categoryCounts = new Map();
 const featuredCategories = new Set(["Award Assembly", "Graduation 2026", "STEAM Week"]);
@@ -14,10 +11,10 @@ function formatCategory(folder) {
     .replace(/\bSteam\b/, "STEAM");
 }
 
-export const localGallery = Object.entries(categoryImages)
-  .map(([relativePath, image]) => ({
+export const localGallery = categoryImages
+  .map(({ relativePath, image }) => ({
     relativePath,
-    category: formatCategory(relativePath.split("/")[2]),
+    category: formatCategory(relativePath.split("/")[0]),
     image,
   }))
   .sort((left, right) => left.relativePath.localeCompare(right.relativePath, undefined, { numeric: true }))

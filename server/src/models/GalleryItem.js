@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const CURRENT_GALLERY_VERSION = "categories-2026-07";
+const CURRENT_GALLERY_VERSION = "categories-2026-07-stable";
 
 const galleryItemSchema = new mongoose.Schema(
   {

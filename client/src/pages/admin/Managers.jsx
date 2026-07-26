@@ -62,7 +62,7 @@ export function GalleryManager() {
           title, description, image, category, featured,
         })),
       });
-      window.localStorage.removeItem("rehoboth-api-cache:v1:gallery-categories-v2");
+      window.localStorage.removeItem("rehoboth-api-cache:v1:gallery-categories-v3");
       toast.success("Gallery replaced. The imported photos are now editable.");
       setManagerKey((key) => key + 1);
       return true;

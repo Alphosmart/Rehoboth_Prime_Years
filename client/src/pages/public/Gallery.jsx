@@ -13,7 +13,7 @@ export default function Gallery() {
   const [active, setActive] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { data, loading, error } = useApi(() => http.get("/gallery"), [], {
-    cacheKey: "gallery-categories-v2",
+    cacheKey: "gallery-categories-v3",
     fallbackData: localGallery,
   });
   const allItems = useMemo(() => (data?.length ? data : localGallery), [data]);
