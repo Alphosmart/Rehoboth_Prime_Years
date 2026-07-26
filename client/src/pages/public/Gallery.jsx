@@ -13,14 +13,10 @@ export default function Gallery() {
   const [active, setActive] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { data, loading, error } = useApi(() => http.get("/gallery"), [], {
-    cacheKey: "gallery",
+    cacheKey: "gallery-categories-v2",
     fallbackData: localGallery,
   });
-  const allItems = useMemo(() => {
-    const byId = new Map();
-    [...localGallery, ...(data || [])].forEach((item) => byId.set(item._id, item));
-    return [...byId.values()];
-  }, [data]);
+  const allItems = useMemo(() => (data?.length ? data : localGallery), [data]);
   const items = useMemo(
     () => allItems.filter((item) => !category || item.category === category),
     [allItems, category]
