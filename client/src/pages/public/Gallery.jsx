@@ -5,6 +5,7 @@ import Loader from "../../components/public/Loader";
 import ErrorMessage from "../../components/public/ErrorMessage";
 import { GalleryCard } from "../../components/public/Cards";
 import { localGallery } from "./localGallery";
+import { optimizeCloudinaryImage } from "../../utils/cloudinary";
 
 const PAGE_SIZE = 24;
 
@@ -13,7 +14,7 @@ export default function Gallery() {
   const [active, setActive] = useState(null);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const { data, loading, error } = useApi(() => http.get("/gallery"), [], {
-    cacheKey: "gallery-categories-v3",
+    cacheKey: "gallery-categories-v4",
     fallbackData: localGallery,
   });
   const allItems = useMemo(() => (data?.length ? data : localGallery), [data]);
@@ -95,7 +96,7 @@ export default function Gallery() {
           >
             ‹
           </button>
-          <img src={active.image} alt={active.title} className="max-h-[85vh] max-w-[85vw] rounded-lg object-contain" />
+          <img src={optimizeCloudinaryImage(active.image, 1800)} alt={active.title} className="max-h-[85vh] max-w-[85vw] rounded-lg object-contain" />
           <button
             type="button"
             aria-label="Next image"

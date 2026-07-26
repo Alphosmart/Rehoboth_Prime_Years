@@ -1,5 +1,6 @@
 import { Calendar, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
+import { optimizeCloudinaryImage } from "../../utils/cloudinary";
 
 export function BlogCard({ post }) {
   return (
@@ -19,7 +20,7 @@ export function GalleryCard({ item, onOpen }) {
   return (
     <button onClick={() => onOpen?.(item)} className="card overflow-hidden text-left">
       <div className="flex h-64 w-full items-center justify-center bg-slate-100">
-        <img src={item.image} alt={item.title} className="h-full w-full object-contain" loading="lazy" />
+        <img src={optimizeCloudinaryImage(item.image, 720)} alt={item.title} className="h-full w-full object-contain" loading="lazy" decoding="async" />
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-slate-950">{item.title}</h3>

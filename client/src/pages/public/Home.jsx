@@ -130,7 +130,7 @@ export default function Home() {
   const [heroMuted, setHeroMuted] = useState(true);
   const home = useApi(() => http.get("/homepage"), [], { cacheKey: "homepage", fallbackData: defaultHomepage });
   const blogs = useApi(() => http.get("/blogs?status=published"), [], { cacheKey: "blogs-published", fallbackData: defaultBlogs });
-  const gallery = useApi(() => http.get("/gallery"), [], { cacheKey: "gallery-categories-v3", fallbackData: localGallery });
+  const gallery = useApi(() => http.get("/gallery"), [], { cacheKey: "gallery-categories-v4", fallbackData: localGallery });
   const events = useApi(() => http.get("/events"), [], { cacheKey: "events", fallbackData: defaultEvents });
   const testimonials = useApi(() => http.get("/testimonials?active=true"), [], { cacheKey: "testimonials-active", fallbackData: defaultTestimonials });
   const academics = useApi(() => http.get("/academics?active=true"), [], { cacheKey: "academics-active", fallbackData: defaultAcademics });

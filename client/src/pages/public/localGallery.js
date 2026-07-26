@@ -1,4 +1,4 @@
-import categoryImages from "virtual:category-gallery";
+import categoryImages from "../../data/categoryGallery.json";
 
 const categoryCounts = new Map();
 const featuredCategories = new Set(["Award Assembly", "Graduation 2026", "STEAM Week"]);
@@ -12,9 +12,9 @@ function formatCategory(folder) {
 }
 
 export const localGallery = categoryImages
-  .map(({ relativePath, image }) => ({
+  .map(({ relativePath, category, image }) => ({
     relativePath,
-    category: formatCategory(relativePath.split("/")[0]),
+    category: formatCategory(category),
     image,
   }))
   .sort((left, right) => left.relativePath.localeCompare(right.relativePath, undefined, { numeric: true }))
