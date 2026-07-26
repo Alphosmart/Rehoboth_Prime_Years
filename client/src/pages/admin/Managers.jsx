@@ -1,4 +1,8 @@
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
 import ResourceManager from "../../components/admin/ResourceManager";
+import http from "../../api/http";
+import { localGallery } from "../public/localGallery";
 
 const mediaDescription = "Upload a file, paste a direct image/video link, or paste a YouTube or Vimeo link.";
 const seoTitleDescription = "Optional. This is the title Google may show for this page. Keep it clear and under 60 characters.";
@@ -45,7 +49,64 @@ export const headOfSchoolFields = [{ name: "title", label: "Page title" }, { nam
 export function SettingsManager() { return <ResourceManager title="Website Settings" intro="Your school's name, logo, contact details, and social links. These appear across the whole website. Fill in the boxes and click Save changes — there is no list here because there is only one set of settings." endpoint="/settings" fields={settingsFields} singleton />; }
 export function HomepageManager() { return <ResourceManager title="Homepage Content" intro="Everything visitors see first on your home page: the big hero banner, the rotating slideshow, and the sections below it. Edit the boxes and click Save changes to update the live home page." endpoint="/homepage" fields={homepageFields} singleton />; }
 export function BlogManager() { return <ResourceManager title="Blog and News" intro="Write news posts and articles. Fill in the form and click Create to add one — it appears in the list below. Set Status to 'published' when you want visitors to see it; keep it as 'draft' while you are still working." endpoint="/blogs" fields={blogFields} columns={["title", "category", "status"]} />; }
-export function GalleryManager() { return <ResourceManager title="Gallery" intro="Add photos to your website gallery. Fill in a title, upload an image, then click Create. Each photo you add shows up in the list below, where you can edit or delete it." endpoint="/gallery" fields={galleryFields} columns={["title", "category", "featured"]} />; }
+export function GalleryManager() {
+  const [importing, setImporting] = useState(false);
+  const [managerKey, setManagerKey] = useState(0);
+  const checkedForImport = useRef(false);
+
+  async function importGallery() {
+    try {
+      setImporting(true);
+      await http.post("/gallery/replace-from-categories", {
+        items: localGallery.map(({ title, description, image, category, featured }) => ({
+          title, description, image, category, featured,
+        })),
+      });
+      window.localStorage.removeItem("rehoboth-api-cache:v1:gallery-categories-v2");
+      toast.success("Gallery replaced. The imported photos are now editable.");
+      setManagerKey((key) => key + 1);
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.message || error.message || "Unable to replace gallery");
+      return false;
+    } finally {
+      setImporting(false);
+    }
+  }
+
+  async function replaceGallery() {
+    if (!window.confirm(`Replace the gallery with all ${localGallery.length} photos from the Categories folder? This removes the previous gallery records.`)) return;
+    await importGallery();
+  }
+
+  useEffect(() => {
+    if (checkedForImport.current) return;
+    checkedForImport.current = true;
+
+    async function importWhenEmpty() {
+      try {
+        const response = await http.get("/gallery");
+        if (!response.data?.length) await importGallery();
+      } catch (error) {
+        toast.error(error.response?.data?.message || error.message || "Unable to load the gallery");
+      }
+    }
+
+    importWhenEmpty();
+  }, []);
+
+  return (
+    <>
+      <div className="mb-5 rounded-lg border border-brand/20 bg-brand/5 p-4">
+        <p className="text-sm text-slate-700">The Categories folder contains {localGallery.length} photos. Import them once to replace older gallery records and make every photo editable here.</p>
+        <button type="button" className="btn-secondary mt-3" disabled={importing} onClick={replaceGallery}>
+          {importing ? "Replacing gallery…" : "Replace with Categories folder"}
+        </button>
+      </div>
+      <ResourceManager key={managerKey} title="Gallery" intro="Add photos to your website gallery. Imported and newly added photos can be edited or deleted below." endpoint="/gallery" fields={galleryFields} columns={["title", "category", "featured"]} />
+    </>
+  );
+}
 export function EventManager() { return <ResourceManager title="Events" intro="Add upcoming events with a date, time, and location. Fill in the form and click Create. Events appear in the list below and on the public Events page." endpoint="/events" fields={eventFields} columns={["title", "date", "location"]} />; }
 export function AcademicManager() { return <ResourceManager title="Academics" intro="List the academic programmes or classes your school offers. Fill in the form and click Create. Untick 'Show on website' to hide one without deleting it." endpoint="/academics" fields={academicFields} columns={["title", "level", "isActive"]} />; }
 export function AdmissionsManager() { return <ResourceManager title="Admissions" intro="The content of your public Admissions page — requirements, steps to apply, and a closing message. Edit the boxes and click Save changes." endpoint="/admissions" fields={admissionFields} singleton />; }
