@@ -90,7 +90,11 @@ Use **Pages** to edit static website pages:
 
 The About page includes content, mission, vision, and core values. The Privacy Policy uses simpler page content fields.
 
-Rich text fields support basic formatting such as bold, italic, and lists.
+Rich text fields support basic formatting such as bold, italic, lists, and links.
+
+To add a link, select the words you want to link and click **Link**, then enter the address. You can enter a web address, an email address, or a phone number. Click **Unlink** to remove a link from selected words.
+
+You do not have to link web addresses by hand. Any address typed on its own inside content, along with email addresses, becomes clickable automatically on the public website. Links to other websites open in a new tab.
 
 Search preview fields:
 
