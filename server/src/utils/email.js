@@ -1,4 +1,8 @@
-const configured = Boolean(process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL);
+const senderValue = process.env.BREVO_SENDER_EMAIL || process.env.NEWSLETTER_FROM_EMAIL;
+const senderMatch = senderValue?.match(/^\s*(.*?)\s*<([^<>]+)>\s*$/);
+const senderEmail = senderMatch ? senderMatch[2].trim() : senderValue?.trim();
+const senderName = process.env.BREVO_SENDER_NAME || senderMatch?.[1]?.trim() || "Rehoboth Prime";
+const configured = Boolean(process.env.BREVO_API_KEY && senderEmail);
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (character) => ({
@@ -12,7 +16,7 @@ function escapeHtml(value) {
 
 async function sendEmail({ to, subject, text, html }) {
   if (!configured) {
-    const error = new Error("Brevo email is not configured. Set BREVO_API_KEY and BREVO_SENDER_EMAIL.");
+    const error = new Error("Brevo email is not configured. Set BREVO_API_KEY and a sender using BREVO_SENDER_EMAIL or NEWSLETTER_FROM_EMAIL.");
     error.statusCode = 503;
     throw error;
   }
@@ -26,8 +30,8 @@ async function sendEmail({ to, subject, text, html }) {
     },
     body: JSON.stringify({
       sender: {
-        email: process.env.BREVO_SENDER_EMAIL,
-        name: process.env.BREVO_SENDER_NAME || "Rehoboth Prime"
+        email: senderEmail,
+        name: senderName
       },
       to: [{ email: to }],
       subject,
