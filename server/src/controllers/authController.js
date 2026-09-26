@@ -8,6 +8,7 @@ const asyncHandler = require("../middleware/asyncHandler");
 const signToken = require("../utils/token");
 const { clearAuthCookie, setAuthCookie } = require("../utils/authCookie");
 const { sendEmail } = require("../utils/email");
+const createPasswordEmail = require("../utils/passwordEmail");
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -50,10 +51,17 @@ exports.forgotPassword = asyncHandler(async (req, res) => {
     await user.save();
     const setupUrl = passwordSetupUrl(token);
     try {
+      const emailContent = createPasswordEmail({
+        mode: "reset",
+        name: user.name,
+        email: user.email,
+        url: setupUrl,
+        expiresIn: "1 hour"
+      });
       await sendEmail({
         to: user.email,
         subject: "Reset your school admin password",
-        text: `Use this one-time link to reset your password. It expires in 1 hour:\n\n${setupUrl}\n`
+        ...emailContent
       });
     } catch (error) {
       console.error("Password reset email failed:", error.message);

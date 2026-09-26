@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const User = require("../models/User");
 const asyncHandler = require("../middleware/asyncHandler");
 const { sendEmail } = require("../utils/email");
+const createPasswordEmail = require("../utils/passwordEmail");
 
 function passwordSetupUrl(token) {
   const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173").split(",")[0].trim();
@@ -31,10 +32,17 @@ exports.createUser = asyncHandler(async (req, res) => {
   });
   const setupUrl = passwordSetupUrl(token);
   try {
+    const emailContent = createPasswordEmail({
+      mode: "invite",
+      name: user.name,
+      email: user.email,
+      url: setupUrl,
+      expiresIn: "24 hours"
+    });
     const delivery = await sendEmail({
       to: user.email,
       subject: "Set up your school admin account",
-      text: `Hello ${user.name},\n\nYour admin account has been created. Sign in with ${user.email} after setting your password using this one-time link (expires in 24 hours):\n\n${setupUrl}\n`
+      ...emailContent
     });
     if (!delivery.delivered && process.env.NODE_ENV === "production") {
       await User.findByIdAndDelete(user._id);
