@@ -1,28 +1,49 @@
-const nodemailer = require("nodemailer");
+const configured = Boolean(process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL);
 
-const configured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
-
-let transporter = null;
-if (configured) {
-  transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT) || 587,
-    secure: process.env.SMTP_SECURE === "true" || Number(process.env.SMTP_PORT) === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
-  });
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
 }
 
-// Send an email. Degrades gracefully when SMTP isn't configured (logs to the
-// console in development) so flows like password reset still work locally.
 async function sendEmail({ to, subject, text, html }) {
   if (!configured) {
-    if (process.env.NODE_ENV !== "production") {
-      console.info(`[email:disabled] To: ${to} | ${subject}\n${text || ""}`);
-    }
-    return { delivered: false };
+    const error = new Error("Brevo email is not configured. Set BREVO_API_KEY and BREVO_SENDER_EMAIL.");
+    error.statusCode = 503;
+    throw error;
   }
-  const from = process.env.SMTP_FROM || `School CMS <${process.env.SMTP_USER}>`;
-  await transporter.sendMail({ from, to, subject, text, html });
+
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
+    headers: {
+      accept: "application/json",
+      "api-key": process.env.BREVO_API_KEY,
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      sender: {
+        email: process.env.BREVO_SENDER_EMAIL,
+        name: process.env.BREVO_SENDER_NAME || "Rehoboth Prime"
+      },
+      to: [{ email: to }],
+      subject,
+      textContent: text,
+      htmlContent: html || `<p>${escapeHtml(text || "").replace(/\n/g, "<br>")}</p>`
+    }),
+    signal: AbortSignal.timeout(15000)
+  });
+
+  if (!response.ok) {
+    const details = (await response.text()).slice(0, 300);
+    const error = new Error(`Brevo email request failed (${response.status}): ${details}`);
+    error.statusCode = 502;
+    throw error;
+  }
+
   return { delivered: true };
 }
 
