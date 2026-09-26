@@ -20,6 +20,7 @@ import Contact from "./pages/public/Contact";
 import Portal from "./pages/public/Portal";
 import NotFound from "./pages/public/NotFound";
 import Login from "./pages/admin/Login";
+import SetPassword from "./pages/admin/SetPassword";
 import Dashboard from "./pages/admin/Dashboard";
 import Messages from "./pages/admin/Messages";
 import Applications from "./pages/admin/Applications";
@@ -70,6 +71,7 @@ export default function App() {
         <Route path="privacy-policy" element={<SimplePage slug="privacy-policy" />} />
       </Route>
       <Route path={ADMIN_LOGIN_ROUTE} element={<Login />} />
+      <Route path={`${ADMIN_LOGIN_ROUTE}/set-password`} element={<SetPassword />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<Dashboard />} />

@@ -1,4 +1,5 @@
 const { z } = require("zod");
+const crypto = require("crypto");
 const speakeasy = require("speakeasy");
 const qrcode = require("qrcode");
 const User = require("../models/User");
@@ -6,6 +7,7 @@ const AuditLog = require("../models/AuditLog");
 const asyncHandler = require("../middleware/asyncHandler");
 const signToken = require("../utils/token");
 const { clearAuthCookie, setAuthCookie } = require("../utils/authCookie");
+const { sendEmail } = require("../utils/email");
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -26,6 +28,57 @@ function recordAuth(req, user, action) {
     ip: req.ip
   }).catch((error) => console.error("Audit log failed:", error.message));
 }
+
+function passwordSetupUrl(token) {
+  const clientUrl = (process.env.CLIENT_URL || "http://localhost:5173").split(",")[0].trim();
+  const url = new URL("/school-office/access/set-password", clientUrl);
+  url.searchParams.set("token", token);
+  return url.toString();
+}
+
+function hashPasswordSetupToken(token) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
+exports.forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = z.object({ email: z.string().email() }).parse(req.body);
+  const user = await User.findOne({ email: email.toLowerCase(), isActive: true });
+  if (user) {
+    const token = crypto.randomBytes(32).toString("hex");
+    user.passwordSetupTokenHash = hashPasswordSetupToken(token);
+    user.passwordSetupExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+    await user.save();
+    const setupUrl = passwordSetupUrl(token);
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: "Reset your school admin password",
+        text: `Use this one-time link to reset your password. It expires in 1 hour:\n\n${setupUrl}\n`
+      });
+    } catch (error) {
+      console.error("Password reset email failed:", error.message);
+    }
+  }
+  res.json({ message: "If an active account exists for that email, password setup instructions have been sent." });
+});
+
+exports.setPassword = asyncHandler(async (req, res) => {
+  const { token, password } = z.object({
+    token: z.string().min(32),
+    password: z.string().min(8)
+  }).parse(req.body);
+  const user = await User.findOne({
+    passwordSetupTokenHash: hashPasswordSetupToken(token),
+    passwordSetupExpiresAt: { $gt: new Date() },
+    isActive: true
+  }).select("+password");
+  if (!user) return res.status(400).json({ message: "This password link is invalid or has expired." });
+  user.password = password;
+  user.passwordSetupTokenHash = undefined;
+  user.passwordSetupExpiresAt = undefined;
+  await user.save();
+  res.json({ message: "Password set successfully. You can now sign in." });
+});
 
 exports.login = asyncHandler(async (req, res) => {
   const { email, password, token } = loginSchema.parse(req.body);

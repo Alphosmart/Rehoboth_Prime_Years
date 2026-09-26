@@ -45,6 +45,12 @@ MONGO_URI=mongodb://127.0.0.1:27017/rehoboth_prime_years
 JWT_SECRET=replace-with-a-long-random-secret
 JWT_EXPIRES_IN=7d
 CLIENT_URL=http://localhost:5173
+SMTP_HOST=
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=
+SMTP_PASS=
+SMTP_FROM=
 ADMIN_NAME=School Admin
 ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=ChangeMe123!
@@ -145,7 +151,8 @@ Backend:
 2. Configure production environment variables.
 3. Deploy `server` to Render, Railway, Fly.io, or another Node host.
 4. Set `CLIENT_URL` to the deployed frontend URL.
-5. Run `npm run seed` once, or create the first admin through a protected deployment task.
+5. Configure the SMTP variables shown above so new-user invitations and password recovery emails can be delivered.
+6. Run `npm run seed` once, or create the first admin through a protected deployment task.
 
 Frontend:
 

@@ -3,6 +3,8 @@ const auth = require("../controllers/authController");
 const { protect, adminOnly, optionalAuth } = require("../middleware/auth");
 const { adminRateLimit, loginRateLimit } = require("../middleware/security");
 
+router.post("/forgot-password", adminRateLimit, auth.forgotPassword);
+router.post("/set-password", adminRateLimit, auth.setPassword);
 router.post("/login", loginRateLimit, auth.login);
 router.post("/logout", adminRateLimit, optionalAuth, auth.logout);
 router.get("/me", protect, adminOnly, auth.me);
